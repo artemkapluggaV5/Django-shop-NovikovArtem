@@ -1,12 +1,24 @@
 {% extends 'catalog/base.html' %}
+
 {% block content %}
 <div class="container mt-4">
-    <h1>Форма категории</h1>
-    <form method="post">
+    <h1>Редактирование категории</h1>
+
+    <form method="post" class="mb-3">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit" class="btn btn-success">Сохранить</button>
-        <a href="{% url 'categories_list' %}" class="btn btn-secondary">Отмена</a>
+        <button class="btn btn-success">Сохранить</button>
+        <a href="{% url 'categories' %}" class="btn btn-secondary">Назад</a>
+    </form>
+
+    <hr>
+
+    <form method="post">
+        {% csrf_token %}
+        <button name="delete" class="btn btn-danger"
+                onclick="return confirm('Точно удалить категорию?')">
+            Удалить
+        </button>
     </form>
 </div>
 {% endblock %}
