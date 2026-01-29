@@ -1,5 +1,4 @@
 {% extends 'catalog/base.html' %}
-
 {% block content %}
 <div class="container mt-4">
     <h1>Категории</h1>
@@ -25,7 +24,7 @@
             <th>ID</th>
             <th>Название</th>
             <th>Slug</th>
-            <th>Активна</th>
+            <th>Описание</th>
             <th></th>
         </tr>
         </thead>
@@ -35,24 +34,23 @@
             <td>{{ cat.id }}</td>
             <td>{{ cat.name }}</td>
             <td>{{ cat.slug }}</td>
-            <td>{{ cat.is_active }}</td>
+            <td>{{ cat.description }}</td>
     <td>
     <a href="{% url 'category_detail' cat.id %}"
        class="btn btn-primary btn-sm">
         Редактировать
     </a>
 
-    <form method="post"
-          action="{% url 'category_detail' cat.id %}"
-          style="display:inline;">
-        {% csrf_token %}
-        <button name="delete"
-                class="btn btn-danger btn-sm"
-                onclick="return confirm('Удалить категорию?')">
-            Удалить
-        </button>
-    </form>
 </td>
+               <td> <form method="post"
+              action="{% url 'category_detail' cat.id %}">
+            {% csrf_token %}
+            <button name="delete"
+                    class="btn btn-danger btn-sm"
+                    onclick="return confirm('Удалить категорию?')">
+                Удалить
+            </button>
+               </form></td>
 
         </tr>
         {% empty %}

@@ -1,7 +1,8 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Category
 from .forms import CategoryForm
-
+from .models import Product
+from .forms import ProductForm
 
 def home_redirect(request):
     return redirect('categories')
@@ -43,3 +44,16 @@ def category_detail(request, pk):
         'form': form,
         'category': category
     })
+
+def product_list(request):
+    products = Product.objects.all()
+    form = ProductForm(request.POST or None)
+    if request.method == 'POST' and form.is_valid():
+        form.save()
+        return redirect('product_list')
+
+    return render(request, 'catalog/product_list.html', {
+        'products': products,
+        'form': form
+    })
+

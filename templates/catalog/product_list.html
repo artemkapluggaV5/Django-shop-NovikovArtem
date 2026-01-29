@@ -1,0 +1,71 @@
+{% extends 'catalog/base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+
+    <h1>Товары</h1>
+
+    <button class="btn btn-success mb-3"
+            onclick="document.getElementById('create-form').style.display='block'">
+        Добавить товар
+    </button>
+
+    <div id="create-form" style="display:none;">
+        <form method="post" class="mb-4">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button class="btn btn-success">Сохранить</button>
+        </form>
+    </div>
+
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Название</th>
+            <th>Категория</th>
+            <th>Цена</th>
+            <th>Активен</th>
+            <th></th>
+        </tr>
+        </thead>
+
+        <tbody>
+        {% for product in products %}
+        <tr>
+            <td>{{ product.id }}</td>
+            <td>{{ product.name }}</td>
+            <td>{{ product.category.name }}</td>
+            <td>{{ product.price }}</td>
+            <td>{{ product.is_active }}</td>
+            <td>
+
+                <a href="{% url 'product_detail' product.id %}"
+                   class="btn btn-primary btn-sm">
+                    Редактировать
+                </a>
+
+                <form method="post"
+                      action="{% url 'product_detail' product.id %}"
+                      style="display:inline;">
+                    {% csrf_token %}
+                    <button name="delete"
+                            class="btn btn-danger btn-sm"
+                            onclick="return confirm('Удалить товар?')">
+                        Удалить
+                    </button>
+                </form>
+
+            </td>
+        </tr>
+
+        {% empty %}
+        <tr>
+            <td colspan="6">Товаров нет</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+{% endblock %}

@@ -1,5 +1,4 @@
 {% load static %}
-
 <!doctype html>
 <html lang="ru">
 <head>
@@ -10,6 +9,7 @@
     <title>{{ title }}</title>
 </head>
 <body>
+{% include "includes/header.html" %}
 {% block content %} {% endblock %}
 </body>
 </html>
