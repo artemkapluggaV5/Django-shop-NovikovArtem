@@ -1,78 +1,63 @@
-from django.shortcuts import render, get_object_or_404, redirect
-from .models import Category
-from .forms import CategoryForm
-from .models import Product
-from .forms import ProductForm
 
-def home_redirect(request):
-    return redirect('categories')
+from django.urls import reverse_lazy
+from django.views.generic import RedirectView, ListView, CreateView, UpdateView, DeleteView
+from .models import Category, Product
+from .forms import CategoryForm, ProductForm
+
+class HomeRedirectView(RedirectView):
+    pattern_name = 'categories'
+
+class CategoryListView(ListView):
+    model = Category
+    template_name = 'catalog/catalog_list.html'
+    context_object_name = 'categories'
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        q = self.request.GET.get('q')
+        if q:
+            queryset = queryset.filter(name__icontains=q)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = CategoryForm()  # Форма для быстрого добавления
+        return context
+
+class CategoryUpdateView(UpdateView):
+    model = Category
+    form_class = CategoryForm
+    template_name = 'catalog/category_form.html'
+    success_url = reverse_lazy('categories')
+
+class CategoryDeleteView(DeleteView):
+    model = Category
+    success_url = reverse_lazy('categories')
 
 
-def categories(request):
-    categories = Category.objects.all()
+# 3. ТОВАРЫ
+class ProductListView(ListView):
+    model = Product
+    template_name = 'catalog/product_list.html'
+    context_object_name = 'products'
 
-    if request.method == 'POST':
-        form = CategoryForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('categories')
-    else:
-        form = CategoryForm()
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = ProductForm()
+        return context
 
-    return render(request, 'catalog/catalog_list.html', {
-        'categories': categories,
-        'form': form
-    })
+class ProductCreateView(CreateView):
+    model = Product
+    form_class = ProductForm
+    template_name = 'catalog/product_form.html'
+    success_url = reverse_lazy('product_list')
 
+class ProductUpdateView(UpdateView):
+    model = Product
+    form_class = ProductForm
+    template_name = 'catalog/product_form.html'
+    success_url = reverse_lazy('product_list')
 
-def category_detail(request, pk):
-    category = get_object_or_404(Category, pk=pk)
-
-    if request.method == 'POST':
-        if 'delete' in request.POST:
-            category.delete()
-            return redirect('categories')
-
-        form = CategoryForm(request.POST, instance=category)
-        if form.is_valid():
-            form.save()
-            return redirect('categories')
-    else:
-        form = CategoryForm(instance=category)
-
-    return render(request, 'catalog/category_form.html', {
-        'form': form,
-        'category': category
-    })
-
-def product_list(request):
-    products = Product.objects.all()
-    form = ProductForm(request.POST or None)
-    if request.method == 'POST' and form.is_valid():
-        form.save()
-        return redirect('product_list')
-
-    return render(request, 'catalog/product_list.html', {
-        'products': products,
-        'form': form
-    })
-
-def product_detail(request, pk):
-    product = get_object_or_404(Product, pk=pk)
-
-    if request.method == 'POST':
-        if 'delete' in request.POST:
-            product.delete()
-            return redirect('product_list')
-
-        form = ProductForm(request.POST, instance=product)
-        if form.is_valid():
-            form.save()
-            return redirect('product_list')
-    else:
-        form = ProductForm(instance=product)
-
-    return render(request, 'catalog/product_form.html', { # Вам нужно будет создать этот шаблон
-        'form': form,
-        'product': product
-    })
+class ProductDeleteView(DeleteView):
+    model = Product
+    success_url = reverse_lazy('product_list')

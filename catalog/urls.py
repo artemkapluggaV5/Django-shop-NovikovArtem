@@ -3,11 +3,16 @@ from catalog import views
 
 
 urlpatterns = [
-    path('', views.home_redirect, name='home'),
+    path('', views.HomeRedirectView.as_view(), name='home'),
 
-    path('categories/', views.categories, name='categories'),
-    path('categories/<int:pk>/', views.category_detail, name='category_detail'),
+    # Категории
+    path('categories/', views.CategoryListView.as_view(), name='categories'),
+    path('categories/<int:pk>/edit/', views.CategoryUpdateView.as_view(), name='category-detail'),
+    path('categories/<int:pk>/delete/', views.CategoryDeleteView.as_view(), name='category-delete'),
 
-    path('products/', views.product_list, name='product_list'),
-    path('products/<int:pk>/', views.product_detail, name='product_detail'),
+    # Товары
+    path('products/', views.ProductListView.as_view(), name='product_list'),
+    path('products/create/', views.ProductCreateView.as_view(), name='product-create'),
+    path('products/<int:pk>/edit/', views.ProductUpdateView.as_view(), name='product-update'),
+    path('products/<int:pk>/delete/', views.ProductDeleteView.as_view(), name='product-delete'),
 ]
