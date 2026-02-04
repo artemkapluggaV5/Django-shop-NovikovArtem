@@ -3,6 +3,10 @@ from django.contrib import admin
 from django.contrib import admin
 from .models import Category, Product
 
+class ProductInline(admin.TabularInline):
+    model = Product
+    extra = 1
+    prepopulated_fields = {'slug': ('name',)}
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
@@ -11,6 +15,7 @@ class CategoryAdmin(admin.ModelAdmin):
     search_fields = ['name', 'description']
     prepopulated_fields = {'slug': ('name',)}
     list_per_page = 20
+    inlines = [ProductInline]
 
 
 @admin.register(Product)

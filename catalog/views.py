@@ -19,10 +19,12 @@ class CategoryListView(ListView):
             queryset = queryset.filter(name__icontains=q)
         return queryset
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['form'] = CategoryForm()  # Форма для быстрого добавления
-        return context
+
+class CategoryCreateView(CreateView):
+    model = Category
+    form_class = CategoryForm
+    template_name = 'catalog/category_form.html'
+    success_url = reverse_lazy('categories')
 
 class CategoryUpdateView(UpdateView):
     model = Category
@@ -35,16 +37,12 @@ class CategoryDeleteView(DeleteView):
     success_url = reverse_lazy('categories')
 
 
-# 3. ТОВАРЫ
 class ProductListView(ListView):
     model = Product
+    queryset = Product.objects.select_related('category')
     template_name = 'catalog/product_list.html'
     context_object_name = 'products'
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['form'] = ProductForm()
-        return context
 
 class ProductCreateView(CreateView):
     model = Product

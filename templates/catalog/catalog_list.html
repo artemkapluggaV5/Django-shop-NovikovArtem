@@ -4,21 +4,9 @@
 <div class="container mt-4">
     <h1>Категории</h1>
 
-    <button class="btn btn-success mb-3"
-            onclick="document.getElementById('create-form').style.display='block'">
+    <a href="{% url 'category-create' %}" class="btn btn-success mb-3">
         + Добавить категорию
-    </button>
-
-    <div id="create-form" style="display:none;" class="card card-body mb-4">
-        <h5>Новая категория</h5>
-        <form method="post">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button class="btn btn-success">Сохранить</button>
-            <button type="button" class="btn btn-light" 
-                    onclick="document.getElementById('create-form').style.display='none'">Отмена</button>
-        </form>
-    </div>
+    </a>
 
     <table class="table table-bordered table-hover">
         <thead class="table-light">
@@ -39,18 +27,12 @@
             <td>{{ cat.description|truncatewords:10 }}</td>
             <td>
                 <div class="d-flex gap-2">
-                    <a href="{% url 'category_detail' cat.id %}"
-                       class="btn btn-primary btn-sm">
+                    <a href="{% url 'category-update' cat.id %}" class="btn btn-primary btn-sm">
                         Редактировать
                     </a>
-
-                    <form method="post" action="{% url 'category_detail' cat.id %}" style="margin:0;">
-                        {% csrf_token %}
-                        <button name="delete" class="btn btn-danger btn-sm"
-                                onclick="return confirm('Удалить категорию? Все товары в ней тоже могут удалиться!')">
-                            Удалить
-                        </button>
-                    </form>
+                    <a href="{% url 'category-delete' cat.id %}" class="btn btn-danger btn-sm">
+                        Удалить
+                    </a>
                 </div>
             </td>
         </tr>
