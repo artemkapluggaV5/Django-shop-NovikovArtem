@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     'catalog',
     'debug_toolbar',
+    'users',
 ]
 
 MIDDLEWARE = [
@@ -138,3 +139,5 @@ INTERNAL_IPS = [
     "1.1.1.1",
     "::1",
 ]
+
+AUTH_USER_MODEL = "users.Employee"
