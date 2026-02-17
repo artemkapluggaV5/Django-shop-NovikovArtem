@@ -1,59 +1,128 @@
 {% extends 'catalog/base.html' %}
 
 {% block content %}
-<div class="container mt-4">
-    <h1>Товары</h1>
+    <div class="container py-5">
 
-    <a href="{% url 'product-create' %}" class="btn btn-success mb-3">
-        + Добавить товар
-    </a>
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-5 border-bottom pb-4">
+            <div>
+                <h1 class="display-6 fw-bold text-dark mb-1">Товары</h1>
+                <p class="text-muted mb-0">Всего позиций в каталоге: <span
+                        class="badge bg-light text-dark border">{{ products|length }}</span></p>
+            </div>
+            <a href="{% url 'product-create' %}"
+               class="btn btn-primary btn-lg shadow-sm px-4 rounded-pill mt-3 mt-md-0">
+                <i class="bi bi-plus-circle-fill me-2"></i>Добавить товар
+            </a>
+        </div>
 
-    <table class="table table-bordered table-hover">
-        <thead class="table-light">
-        <tr>
-            <th>ID</th>
-            <th>Название</th>
-            <th>Категория</th>
-            <th>Цена</th>
-            <th>Статус</th>
-            <th style="width: 200px;">Действия</th>
-        </tr>
-        </thead>
+        <div class="row g-4">
+            {% for product in products %}
+                <div class="col-12 col-md-6 col-lg-4 col-xl-3">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden hover-lift transition position-relative">
 
-        <tbody>
-        {% for product in products %}
-        <tr>
-            <td>{{ product.id }}</td>
-            <td><strong>{{ product.name }}</strong></td>
-            <td>{{ product.category.name }}</td>
-            <td>{{ product.price }} руб.</td>
-            <td>
-                {% if product.is_active %}
-                    <span class="badge bg-success">Активен</span>
-                {% else %}
-                    <span class="badge bg-secondary">Черновик</span>
-                {% endif %}
-            </td>
-            <td>
-                <div class="d-flex gap-2">
-                    <a href="{% url 'product-update' product.id %}"
-                       class="btn btn-primary btn-sm">
-                        Редактировать
-                    </a>
+                        <div class="position-absolute top-0 end-0 m-3 z-index-1">
+                            {% if product.is_active %}
+                                <span class="badge bg-success shadow-sm rounded-pill px-2 py-1">
+                            <i class="bi bi-check-lg"></i>
+                        </span>
+                            {% else %}
+                                <span class="badge bg-warning text-dark shadow-sm rounded-pill px-2 py-1">
+                            <i class="bi bi-pause-fill"></i>
+                        </span>
+                            {% endif %}
+                        </div>
 
-                    <a href="{% url 'product-delete' product.id %}"
-                       class="btn btn-danger btn-sm">
-                        Удалить
-                    </a>
+                        <!-- Место для фото -->
+                        <div class="bg-light d-flex align-items-center justify-content-center border-bottom"
+                             style="height: 200px;">
+                            {% if product.image %}
+                                <img src="{{ product.image.url }}" class="img-fluid w-100 h-100"
+                                     style="object-fit: cover;" alt="{{ product.name }}">
+                            {% else %}
+                                <div class="text-center text-muted opacity-25">
+                                    <i class="bi bi-image display-4"></i>
+                                    <p class="small mb-0 mt-2">Нет фото</p>
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Контент карточки -->
+                        <div class="card-body p-4 d-flex flex-column">
+                            <div class="mb-2">
+                                <a href="{% url 'category-detail' product.category.id %}"
+                                   class="text-decoration-none small text-primary fw-bold text-uppercase tracking-wider">
+                                    {{ product.category.name }}
+                                </a>
+                            </div>
+
+                            <a href="{% url 'product-detail' product.id %}" class="text-decoration-none mb-3">
+                                <h5 class="fw-bold text-dark mb-0 lh-base">{{ product.name|truncatechars:40 }}</h5>
+                            </a>
+
+                            <div class="mt-auto pt-3 d-flex align-items-end justify-content-between">
+                                <div>
+                                    <small class="text-muted d-block">Цена</small>
+                                    <span class="h4 fw-bold text-dark mb-0">{{ product.price }} <small class="fw-normal"
+                                                                                                       style="font-size: 0.9rem;">₽</small></span>
+                                </div>
+                                <span class="text-muted small fw-light">ID: #{{ product.id }}</span>
+                            </div>
+                        </div>
+
+                        <!-- Кнопки управления (вылетают при наведении или всегда снизу) -->
+                        <!-- Кнопки управления -->
+                        <div class="card-footer bg-white border-0 p-4 pt-0">
+                            <div class="d-flex gap-2">
+                                <!-- Кнопка редактирования (основная) -->
+                                <a href="{% url 'product-update' product.id %}"
+                                   class="btn btn-outline-primary flex-grow-1 rounded-pill py-2 fw-medium shadow-sm transition">
+                                    <i class="bi bi-pencil-square me-1"></i> Изменить
+                                </a>
+
+                                <!-- Кнопка удаления (акцентная) -->
+                                <a href="{% url 'product-delete' product.id %}"
+                                   class="btn btn-outline-danger rounded-circle d-flex align-items-center justify-content-center shadow-sm transition"
+                                   style="width: 42px; height: 42px;" title="Удалить">
+                                    <i class="bi bi-trash3"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </td>
-        </tr>
-        {% empty %}
-        <tr>
-            <td colspan="6" class="text-center text-muted">Товаров пока нет</td>
-        </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-</div>
+            {% empty %}
+                <!-- Пустое состояние -->
+                <div class="col-12 text-center py-5">
+                    <div class="p-5 bg-white shadow-sm rounded-4">
+                        <i class="bi bi-box2 display-1 text-light"></i>
+                        <h3 class="text-muted mt-4">Товаров пока нет</h3>
+                        <p class="text-secondary mb-4">Каталог пуст. Добавьте первый товар, чтобы увидеть его здесь.</p>
+                        <a href="{% url 'product-create' %}" class="btn btn-primary btn-lg rounded-pill px-5">
+                            Создать товар
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Дополнительные стили для "Вау-эффекта" -->
+    <style>
+        .hover-lift {
+            transition: transform 0.25s ease-in-out, box-shadow 0.25s ease-in-out;
+        }
+
+        .hover-lift:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 1.5rem 3rem rgba(0, 0, 0, 0.1) !important;
+        }
+
+        .tracking-wider {
+            letter-spacing: 0.05em;
+            font-size: 0.75rem;
+        }
+
+        .transition {
+            transition: all 0.3s ease;
+        }
+    </style>
 {% endblock %}
