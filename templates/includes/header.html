@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top shadow-sm py-3">
     <div class="container">
-        <!-- Логотип с акцентом -->
+        <!-- Логотип -->
         <a class="navbar-brand d-flex align-items-center fw-bold fs-4 text-primary" href="{% url 'home' %}">
             <div class="bg-primary text-white rounded-3 p-2 me-2 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
                 <i class="bi bi-shop"></i>
@@ -8,13 +8,13 @@
             <span class="tracking-tight">MyShop <span class="text-dark">Admin</span></span>
         </a>
 
-        <!-- Кнопка для мобилок -->
+        <!-- Кнопка гамбургер для мобилок -->
         <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
 
         <div class="collapse navbar-collapse" id="navbarNav">
-            <!-- Центрированный поиск с иконкой внутри -->
+            <!-- Центрированный поиск -->
             <form class="d-flex ms-auto me-lg-4 my-3 my-lg-0 position-relative shadow-sm rounded-pill overflow-hidden border"
                   method="get"
                   action="{% url 'categories' %}"
@@ -26,22 +26,22 @@
                        type="search"
                        name="q"
                        placeholder="Найти категорию..."
-                       aria-label="Search"
                        value="{{ request.GET.q }}">
                 <button class="btn btn-primary px-3 rounded-pill d-none" type="submit">Найти</button>
             </form>
 
-            <!-- Меню навигации -->
             <ul class="navbar-nav align-items-center">
+                <!-- Ссылка Категории -->
                 <li class="nav-item me-lg-2">
                     <a href="{% url 'categories' %}"
-                       class="nav-link px-3 rounded-pill fw-medium {% if request.resolver_match.url_name == 'categories' or 'category' in request.resolver_match.url_name %}active bg-primary text-white shadow-sm{% else %}text-secondary{% endif %}">
+                       class="nav-link px-3 rounded-pill fw-medium {% if 'category' in request.resolver_match.url_name %}active bg-primary text-white shadow-sm{% else %}text-secondary{% endif %}">
                         <i class="bi bi-grid-fill me-1"></i> Категории
                     </a>
                 </li>
-                <li class="nav-item">
+                <!-- Ссылка Товары -->
+                <li class="nav-item me-lg-3">
                     <a href="{% url 'product_list' %}"
-                       class="nav-link px-3 rounded-pill fw-medium {% if request.resolver_match.url_name == 'product_list' or 'product' in request.resolver_match.url_name %}active bg-primary text-white shadow-sm{% else %}text-secondary{% endif %}">
+                       class="nav-link px-3 rounded-pill fw-medium {% if 'product' in request.resolver_match.url_name %}active bg-primary text-white shadow-sm{% else %}text-secondary{% endif %}">
                         <i class="bi bi-box-seam-fill me-1"></i> Товары
                     </a>
                 </li>
@@ -49,18 +49,45 @@
                 <!-- Разделитель для мобилок -->
                 <hr class="d-lg-none text-muted w-100 my-2">
 
-                <!-- Профиль (опционально для красоты) -->
-                <li class="nav-item ms-lg-3">
-                    <div class="d-flex align-items-center">
-                        <div class="bg-light rounded-circle d-flex align-items-center justify-content-center text-primary fw-bold border" style="width: 40px; height: 40px; cursor: pointer;">
-                            A
-                        </div>
-                    </div>
-                </li>
+                {% if user.is_authenticated %}
+                    <!-- Пользователь авторизован -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center p-0 border-0"
+                           href="#"
+                           id="profileDropdown"
+                           role="button"
+                           data-bs-toggle="dropdown"
+                           aria-expanded="false">
+                            <div class="bg-light rounded-circle d-flex align-items-center justify-content-center text-primary fw-bold border" style="width: 40px; height: 40px;">
+                                {{ user.username|default:"U"|slice:":1"|upper }}
+                            </div>
+                            <!-- Имя пользователя (показывается только на мобилках рядом с кружком) -->
+                            <span class="ms-2 d-lg-none text-dark">{{ user.username }}</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2" aria-labelledby="profileDropdown">
+                            <li><h6 class="dropdown-header text-dark fw-bold border-bottom pb-2">{{ user.username }}</h6></li>
+                            <li><a class="dropdown-item mt-2" href="#"><i class="bi bi-person me-2"></i> Профиль</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="bi bi-gear me-2"></i> Настройки</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li class="px-2">
+                                <!-- Форма выхода для Django 5.0 -->
+                                <form action="{% url 'logout' %}" method="post">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-outline-danger btn-sm w-100 rounded-pill">
+                                        <i class="bi bi-box-arrow-right me-1"></i> Выйти
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </li>
+                {% else %}
+                    <!-- Пользователь НЕ авторизован -->
+                    <li class="nav-item d-flex gap-2">
+                        <a href="{% url 'login' %}" class="btn btn-light rounded-pill px-4 fw-medium border text-secondary">Вход</a>
+                        <a href="{% url 'register' %}" class="btn btn-primary rounded-pill px-4 fw-medium shadow-sm">Регистрация</a>
+                    </li>
+                {% endif %}
             </ul>
         </div>
     </div>
 </nav>
-
-<!-- Небольшой отступ под sticky-navbar, чтобы контент не прилипал -->
-<div class="mb-4"></div>

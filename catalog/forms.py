@@ -1,4 +1,7 @@
 from django import forms
+from django.contrib.auth import get_user_model
+from django.contrib.auth.forms import UserCreationForm
+
 from .models import Category
 from django import forms
 from .models import Product
@@ -25,3 +28,14 @@ class ProductForm(forms.ModelForm):
             "description": forms.Textarea(attrs={"class": "form-control", "rows": 3}),
             "is_active": forms.CheckboxInput(attrs={"class": "form-check-input"}),
         }
+
+User = get_user_model()
+
+class EmployeeCreationForm(UserCreationForm):
+    class Meta(UserCreationForm.Meta):
+        model = User
+        fields = (User.USERNAME_FIELD,)
+
+    # Если в твоей модели Employee поля называются по-другому,
+    # или ты хочешь добавить почту, напиши так:
+    # fields = ("email", "first_name", "last_name")

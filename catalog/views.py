@@ -1,7 +1,10 @@
+from django.contrib.auth import login
+from django.contrib.auth.forms import UserCreationForm
+from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import RedirectView, ListView, CreateView, UpdateView, DeleteView, DetailView
 from .models import Category, Product
-from .forms import CategoryForm, ProductForm
+from .forms import CategoryForm, ProductForm, EmployeeCreationForm
 
 
 class HomeRedirectView(RedirectView):
@@ -76,3 +79,14 @@ class ProductDetailView(DetailView):
     model = Product
     template_name = 'catalog/product_detail.html'  # и этот
     context_object_name = 'product'
+
+def register_view(request):
+    if request.method == 'POST':
+        form = EmployeeCreationForm(request.POST) # Важно: используем твою форму
+        if form.is_valid():
+            user = form.save()
+            login(request, user) # Входим сразу после регистрации
+            return redirect('home')
+    else:
+        form = EmployeeCreationForm()
+    return render(request, 'catalog/register.html', {'form': form})

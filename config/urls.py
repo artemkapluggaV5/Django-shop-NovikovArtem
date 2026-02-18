@@ -22,11 +22,13 @@ from django.conf import settings
 urlpatterns = [
     path("admin/", admin.site.urls),
 
-    path("", include("catalog.urls"))
+    path("", include("catalog.urls")),
+    path('cart/', include('cart.urls')),
 ]
 
 if settings.DEBUG:
     import debug_toolbar
+
     urlpatterns = [
-        path('__debug__/', include(debug_toolbar.urls)),
-    ] + urlpatterns
+                      path('__debug__/', include(debug_toolbar.urls)),
+                  ] + urlpatterns
