@@ -1,74 +1,78 @@
 {% extends 'catalog/base.html' %}
 
 {% block content %}
-<div class="container py-5">
+    <div class="container py-5">
 
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-5 border-bottom pb-4">
-        <div>
-            <h1 class="display-6 fw-bold text-dark mb-1">Категории</h1>
-            <p class="text-muted mb-0">Управляйте структурой разделов и вложенными товарами</p>
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-5 border-bottom pb-4">
+            <div>
+                <h1 class="display-6 fw-bold text-dark mb-1">Категории</h1>
+                <p class="text-muted mb-0">Управляйте структурой разделов и вложенными товарами</p>
+            </div>
+            <a href="{% url 'category-create' %}" class="btn btn-primary btn-lg shadow-sm px-4 rounded-pill">
+                <i class="bi bi-plus-circle-fill me-2"></i>Создать категорию
+            </a>
         </div>
-        <a href="{% url 'category-create' %}" class="btn btn-primary btn-lg shadow-sm px-4 rounded-pill">
-            <i class="bi bi-plus-circle-fill me-2"></i>Создать категорию
-        </a>
-    </div>
 
-    <div class="row g-4">
-        {% for cat in categories %}
-        <div class="col-12 col-md-6 col-lg-4">
-            <div class="card h-100 border-0 shadow-sm rounded-4 hover-shadow transition">
-                <div class="card-body p-4">
-                    <div class="d-flex justify-content-between align-items-start mb-3">
-                        <div class="bg-primary bg-opacity-10 text-primary rounded-3 p-3">
-                            <i class="bi bi-folder2-open fs-3"></i>
-                        </div>
-                        <span class="badge bg-light text-muted border rounded-pill px-3 py-2">
+        <div class="row g-4">
+            {% for cat in categories %}
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 hover-shadow transition">
+                        <div class="card-body p-4">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div class="bg-primary bg-opacity-10 text-primary rounded-3 p-3">
+                                    <i class="bi bi-folder2-open fs-3"></i>
+                                </div>
+                                <span class="badge bg-light text-muted border rounded-pill px-3 py-2">
                             ID: #{{ cat.id }}
                         </span>
-                    </div>
+                            </div>
 
-                    <a href="{% url 'category-detail' cat.id %}" class="text-decoration-none">
-                        <h4 class="fw-bold text-dark mb-2">{{ cat.name }}</h4>
-                    </a>
+                            <a href="{% url 'category-detail' cat.id %}" class="text-decoration-none">
+                                <h4 class="fw-bold text-dark mb-2">{{ cat.name }}</h4>
+                            </a>
 
-                    <code class="text-primary small mb-3 d-block">{{ cat.slug }}</code>
+                            <code class="text-primary small mb-3 d-block">{{ cat.slug }}</code>
 
-                    <p class="text-muted small mb-4">
-                        {{ cat.description|truncatewords:15|default:"Описание пока не добавлено для этой категории." }}
-                    </p>
+                            <p class="text-muted small mb-4">
+                                {{ cat.description|truncatewords:15|default:"Описание пока не добавлено для этой категории." }}
+                            </p>
 
-                    <div class="d-flex align-items-center justify-content-between bg-light rounded-3 p-3 mb-4">
-                        <div class="text-center flex-grow-1 border-end">
-                            <div class="fw-bold text-dark h5 mb-0">{{ cat.product_set.count }}</div>
-                            <small class="text-muted text-uppercase" style="font-size: 0.65rem;">Товаров</small>
+                            <div class="d-flex align-items-center justify-content-between bg-light rounded-3 p-3 mb-4">
+                                <div class="text-center flex-grow-1 border-end">
+                                    <div class="fw-bold text-dark h5 mb-0">{{ cat.products.count }}</div>
+                                    <small class="text-muted text-uppercase" style="font-size: 0.65rem;">Товаров</small>
+                                </div>
+                                <div class="text-center flex-grow-1">
+                                    <div class="fw-bold text-dark h5 mb-0">{% if cat.products.count > 0 %}
+                                        Активна{% else %}Пуста{% endif %}</div>
+                                    <small class="text-muted text-uppercase" style="font-size: 0.65rem;">Статус</small>
+                                </div>
+                            </div>
+
+                            <div class="d-flex gap-2">
+                                <a href="{% url 'category-update' cat.id %}"
+                                   class="btn btn-outline-primary flex-grow-1 rounded-pill btn-sm py-2 fw-medium">
+                                    <i class="bi bi-pencil me-1"></i> Изменить
+                                </a>
+                                <a href="{% url 'category-delete' cat.id %}"
+                                   class="btn btn-outline-danger rounded-circle p-2 d-flex align-items-center justify-content-center"
+                                   style="width: 36px; height: 36px;" title="Удалить">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </div>
                         </div>
-                        <div class="text-center flex-grow-1">
-                            <div class="fw-bold text-dark h5 mb-0">{% if cat.product_set.count > 0 %}Активна{% else %}Пуста{% endif %}</div>
-                            <small class="text-muted text-uppercase" style="font-size: 0.65rem;">Статус</small>
-                        </div>
-                    </div>
-
-                    <div class="d-flex gap-2">
-                        <a href="{% url 'category-update' cat.id %}" class="btn btn-outline-primary flex-grow-1 rounded-pill btn-sm py-2 fw-medium">
-                            <i class="bi bi-pencil me-1"></i> Изменить
-                        </a>
-                        <a href="{% url 'category-delete' cat.id %}" class="btn btn-outline-danger rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;" title="Удалить">
-                            <i class="bi bi-trash"></i>
-                        </a>
                     </div>
                 </div>
-            </div>
+            {% empty %}
+                <div class="col-12">
+                    <div class="text-center py-5 bg-white shadow-sm rounded-4">
+                        <i class="bi bi-collection display-1 text-light"></i>
+                        <h3 class="text-muted mt-3">Категорий нет</h3>
+                        <p class="text-secondary">Создайте первую категорию, чтобы начать наполнение магазина.</p>
+                    </div>
+                </div>
+            {% endfor %}
         </div>
-        {% empty %}
-        <div class="col-12">
-            <div class="text-center py-5 bg-white shadow-sm rounded-4">
-                <i class="bi bi-collection display-1 text-light"></i>
-                <h3 class="text-muted mt-3">Категорий нет</h3>
-                <p class="text-secondary">Создайте первую категорию, чтобы начать наполнение магазина.</p>
-            </div>
-        </div>
-        {% endfor %}
     </div>
-</div>
 
 {% endblock %}
