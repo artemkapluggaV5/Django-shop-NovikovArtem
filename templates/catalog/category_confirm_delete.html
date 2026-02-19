@@ -5,25 +5,21 @@
     <div class="row justify-content-center">
         <div class="col-12 col-md-8 col-lg-5">
 
-            <!-- Кнопка "Назад" (опционально, для удобства) -->
             <div class="mb-4">
                 <a href="{% url 'categories' %}" class="text-decoration-none text-muted small shadow-sm bg-white px-3 py-2 rounded-pill border">
                     <i class="bi bi-arrow-left me-1"></i> Вернуться к списку
                 </a>
             </div>
 
-            <!-- Основная карточка подтверждения -->
             <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
                 <div class="card-body p-5 text-center">
 
-                    <!-- Иконка предупреждения -->
                     <div class="mb-4">
                         <div class="d-inline-flex align-items-center justify-content-center bg-danger bg-opacity-10 text-danger rounded-circle" style="width: 80px; height: 80px;">
                             <i class="bi bi-exclamation-triangle-fill fs-1"></i>
                         </div>
                     </div>
 
-                    <!-- Заголовок и текст -->
                     <h2 class="fw-bold text-dark mb-3">Удаление категории</h2>
                     <p class="text-secondary fs-5 mb-4">
                         Вы уверены, что хотите безвозвратно удалить категорию <br>
@@ -32,16 +28,13 @@
                         </span>?
                     </p>
 
-                    <!-- Форма с кнопками -->
                     <form method="post">
                         {% csrf_token %}
                         <div class="d-grid gap-2 d-sm-flex justify-content-center">
-                            <!-- Кнопка подтверждения -->
                             <button type="submit" class="btn btn-danger btn-lg px-4 rounded-pill shadow-sm fw-bold">
                                 <i class="bi bi-trash3 me-2"></i>Удалить навсегда
                             </button>
 
-                            <!-- Кнопка отмены -->
                             <a href="{% url 'categories' %}" class="btn btn-light btn-lg px-4 rounded-pill border shadow-sm">
                                 Отмена
                             </a>
@@ -50,7 +43,6 @@
 
                 </div>
 
-                <!-- Нижняя плашка с пояснением (Footer карточки) -->
                 <div class="card-footer bg-light border-0 py-3 text-center">
                     <small class="text-muted">
                         <i class="bi bi-info-circle me-1"></i> Это действие нельзя будет отменить
@@ -62,6 +54,5 @@
     </div>
 </div>
 
-<!-- Подключаем Bootstrap Icons (если их нет в base.html) -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 {% endblock %}

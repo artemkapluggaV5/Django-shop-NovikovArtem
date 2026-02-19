@@ -1,107 +1,115 @@
 {% extends 'catalog/base.html' %}
 
 {% block content %}
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-12 col-lg-8">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-12 col-lg-8">
 
-            <!-- Хлебные крошки в новом стиле -->
-            <nav aria-label="breadcrumb" class="mb-4">
-                <ol class="breadcrumb bg-white shadow-sm px-3 py-2 rounded-pill border">
-                    <li class="breadcrumb-item"><a href="{% url 'categories' %}" class="text-decoration-none">Категории</a></li>
-                    <li class="breadcrumb-item active fw-medium text-secondary">
-                        {% if object %}Редактирование: {{ object.name }}{% else %}Новая категория{% endif %}
-                    </li>
-                </ol>
-            </nav>
+                <nav aria-label="breadcrumb" class="mb-4">
+                    <ol class="breadcrumb bg-white shadow-sm px-3 py-2 rounded-pill border">
+                        <li class="breadcrumb-item"><a href="{% url 'categories' %}" class="text-decoration-none">Категории</a>
+                        </li>
+                        <li class="breadcrumb-item active fw-medium text-secondary">
+                            {% if object %}Редактирование: {{ object.name }}{% else %}Новая категория{% endif %}
+                        </li>
+                    </ol>
+                </nav>
 
-            <!-- Основная карточка формы -->
-            <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-5">
-                <div class="card-header bg-white border-bottom p-4">
-                    <div class="d-flex align-items-center">
-                        <div class="bg-primary bg-opacity-10 p-2 rounded-3 me-3">
-                            <i class="bi {% if object %}bi-pencil-square{% else %}bi-plus-circle{% endif %} text-primary fs-4"></i>
+                <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-5">
+                    <div class="card-header bg-white border-bottom p-4">
+                        <div class="d-flex align-items-center">
+                            <div class="bg-primary bg-opacity-10 p-2 rounded-3 me-3">
+                                <i class="bi {% if object %}bi-pencil-square{% else %}bi-plus-circle{% endif %} text-primary fs-4"></i>
+                            </div>
+                            <h1 class="h3 mb-0 fw-bold text-dark">
+                                {% if object %}Редактирование категории{% else %}Создание категории{% endif %}
+                            </h1>
                         </div>
-                        <h1 class="h3 mb-0 fw-bold text-dark">
-                            {% if object %}Редактирование категории{% else %}Создание категории{% endif %}
-                        </h1>
+                    </div>
+
+                    <div class="card-body p-4 p-md-5">
+                        <form method="post" novalidate>
+                            {% csrf_token %}
+
+                            {% for field in form %}
+                                <div class="mb-4">
+                                    {% if field.field.widget.input_type == "checkbox" %}
+                                        <!-- Логика для чекбокса (Активна) -->
+                                        <div class="form-check form-switch p-3 bg-light rounded-3 border shadow-sm">
+                                            <input class="form-check-input ms-0 me-2" type="checkbox"
+                                                   name="{{ field.name }}" id="{{ field.id_for_label }}"
+                                                   {% if field.value %}checked{% endif %}>
+                                            <label class="form-check-label fw-bold text-dark"
+                                                   for="{{ field.id_for_label }}">
+                                                {{ field.label }}
+                                            </label>
+                                        </div>
+                                    {% else %}
+                                        <!-- Логика для обычных текстовых полей (ваша текущая) -->
+                                        <label for="{{ field.id_for_label }}" class="form-label fw-bold text-dark px-1">
+                                            {{ field.label }}
+                                        </label>
+                                        <div class="input-group shadow-sm rounded-3 overflow-hidden">
+            <span class="input-group-text bg-light border-end-0">
+                {% if 'name' in field.name %}<i class="bi bi-tag text-muted"></i>
+                {% elif 'slug' in field.name %}<i class="bi bi-link-45deg text-muted"></i>
+                {% else %}<i class="bi bi-text-paragraph text-muted"></i>{% endif %}
+            </span>
+                                            <input type="{{ field.field.widget.input_type|default:'text' }}"
+                                                   name="{{ field.name }}"
+                                                   id="{{ field.id_for_label }}"
+                                                   class="form-control border-start-0 py-2 {% if field.errors %}is-invalid{% endif %}"
+                                                   placeholder="Введите {{ field.label|lower }}..."
+                                                   value="{{ field.value|default:'' }}">
+                                        </div>
+                                    {% endif %}
+
+                                    {% if field.help_text %}
+                                        <div class="form-text px-1">{{ field.help_text }}</div>
+                                    {% endif %}
+
+                                    {% for error in field.errors %}
+                                        <div class="invalid-feedback d-block px-1">
+                                            <i class="bi bi-exclamation-circle me-1"></i> {{ error }}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endfor %}
+
+                            <div class="d-flex gap-3 mt-5 pt-3 border-top">
+                                <button type="submit" class="btn btn-primary btn-lg px-5 rounded-pill shadow-sm">
+                                    <i class="bi bi-check2-circle me-2"></i>Сохранить
+                                </button>
+                                <a href="{% url 'categories' %}"
+                                   class="btn btn-light btn-lg px-4 rounded-pill border shadow-sm">
+                                    Отмена
+                                </a>
+                            </div>
+                        </form>
                     </div>
                 </div>
 
-                <div class="card-body p-4 p-md-5">
-                    <form method="post" novalidate>
-                        {% csrf_token %}
-
-                        <!-- Рендерим форму вручную для идеального дизайна -->
-                        {% for field in form %}
-                        <div class="mb-4">
-                            <label for="{{ field.id_for_label }}" class="form-label fw-bold text-dark px-1">
-                                {{ field.label }}
-                            </label>
-
-                            <!-- Добавляем класс form-control через виджет или вручную -->
-                            <div class="input-group shadow-sm rounded-3 overflow-hidden">
-                                <span class="input-group-text bg-light border-end-0">
-                                    {% if 'name' in field.name %}<i class="bi bi-tag text-muted"></i>
-                                    {% elif 'slug' in field.name %}<i class="bi bi-link-45deg text-muted"></i>
-                                    {% else %}<i class="bi bi-text-paragraph text-muted"></i>{% endif %}
-                                </span>
-                                <input type="{{ field.field.widget.input_type|default:'text' }}"
-                                       name="{{ field.name }}"
-                                       id="{{ field.id_for_label }}"
-                                       class="form-control border-start-0 py-2 {% if field.errors %}is-invalid{% endif %}"
-                                       placeholder="Введите {{ field.label|lower }}..."
-                                       value="{{ field.value|default:'' }}">
+                {% if object %}
+                    <div class="card border-0 shadow-sm rounded-4 bg-danger bg-opacity-10">
+                        <div class="card-body p-4 d-flex align-items-center justify-content-between">
+                            <div>
+                                <h5 class="text-danger fw-bold mb-1">
+                                    <i class="bi bi-exclamation-octagon-fill me-2"></i>Удаление категории
+                                </h5>
+                                <p class="text-danger mb-0 small opacity-75">
+                                    Внимание! Категория будет удалена навсегда без возможности восстановления.
+                                </p>
                             </div>
-
-                            {% if field.help_text %}
-                            <div class="form-text px-1">{{ field.help_text }}</div>
-                            {% endif %}
-
-                            {% for error in field.errors %}
-                            <div class="invalid-feedback d-block px-1">
-                                <i class="bi bi-exclamation-circle me-1"></i> {{ error }}
-                            </div>
-                            {% endfor %}
-                        </div>
-                        {% endfor %}
-
-                        <!-- Кнопки действий -->
-                        <div class="d-flex gap-3 mt-5 pt-3 border-top">
-                            <button type="submit" class="btn btn-primary btn-lg px-5 rounded-pill shadow-sm">
-                                <i class="bi bi-check2-circle me-2"></i>Сохранить
-                            </button>
-                            <a href="{% url 'categories' %}" class="btn btn-light btn-lg px-4 rounded-pill border shadow-sm">
-                                Отмена
+                            <a href="{% url 'category-delete' object.id %}"
+                               class="btn btn-outline-danger px-4 rounded-pill fw-bold bg-white">
+                                Удалить
                             </a>
                         </div>
-                    </form>
-                </div>
-            </div>
-
-            <!-- Опасная зона (только при редактировании) -->
-            {% if object %}
-            <div class="card border-0 shadow-sm rounded-4 bg-danger bg-opacity-10">
-                <div class="card-body p-4 d-flex align-items-center justify-content-between">
-                    <div>
-                        <h5 class="text-danger fw-bold mb-1">
-                            <i class="bi bi-exclamation-octagon-fill me-2"></i>Удаление категории
-                        </h5>
-                        <p class="text-danger mb-0 small opacity-75">
-                            Внимание! Категория будет удалена навсегда без возможности восстановления.
-                        </p>
                     </div>
-                    <a href="{% url 'category-delete' object.id %}" class="btn btn-outline-danger px-4 rounded-pill fw-bold bg-white">
-                        Удалить
-                    </a>
-                </div>
-            </div>
-            {% endif %}
+                {% endif %}
 
+            </div>
         </div>
     </div>
-</div>
 
-<!-- Иконки -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 {% endblock %}

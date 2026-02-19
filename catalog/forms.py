@@ -35,7 +35,3 @@ class EmployeeCreationForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
         model = User
         fields = (User.USERNAME_FIELD,)
-
-    # Если в твоей модели Employee поля называются по-другому,
-    # или ты хочешь добавить почту, напиши так:
-    # fields = ("email", "first_name", "last_name")

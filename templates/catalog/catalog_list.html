@@ -3,7 +3,6 @@
 {% block content %}
 <div class="container py-5">
 
-    <!-- Заголовок -->
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-5 border-bottom pb-4">
         <div>
             <h1 class="display-6 fw-bold text-dark mb-1">Категории</h1>
@@ -18,10 +17,8 @@
         {% for cat in categories %}
         <div class="col-12 col-md-6 col-lg-4">
             <div class="card h-100 border-0 shadow-sm rounded-4 hover-shadow transition">
-                <!-- Верхняя часть карточки -->
                 <div class="card-body p-4">
                     <div class="d-flex justify-content-between align-items-start mb-3">
-                        <!-- Иконка категории (можно заменить на картинку) -->
                         <div class="bg-primary bg-opacity-10 text-primary rounded-3 p-3">
                             <i class="bi bi-folder2-open fs-3"></i>
                         </div>
@@ -30,7 +27,6 @@
                         </span>
                     </div>
 
-                    <!-- Название и ссылка -->
                     <a href="{% url 'category-detail' cat.id %}" class="text-decoration-none">
                         <h4 class="fw-bold text-dark mb-2">{{ cat.name }}</h4>
                     </a>
@@ -41,7 +37,6 @@
                         {{ cat.description|truncatewords:15|default:"Описание пока не добавлено для этой категории." }}
                     </p>
 
-                    <!-- Статистика -->
                     <div class="d-flex align-items-center justify-content-between bg-light rounded-3 p-3 mb-4">
                         <div class="text-center flex-grow-1 border-end">
                             <div class="fw-bold text-dark h5 mb-0">{{ cat.product_set.count }}</div>
@@ -53,7 +48,6 @@
                         </div>
                     </div>
 
-                    <!-- Кнопки действий -->
                     <div class="d-flex gap-2">
                         <a href="{% url 'category-update' cat.id %}" class="btn btn-outline-primary flex-grow-1 rounded-pill btn-sm py-2 fw-medium">
                             <i class="bi bi-pencil me-1"></i> Изменить
@@ -77,13 +71,4 @@
     </div>
 </div>
 
-<style>
-    .hover-shadow:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 1rem 3rem rgba(0,0,0,.08) !important;
-    }
-    .transition {
-        transition: all 0.3s ease;
-    }
-</style>
 {% endblock %}

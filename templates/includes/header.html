@@ -1,20 +1,19 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top shadow-sm py-3">
     <div class="container">
-        <!-- Логотип -->
         <a class="navbar-brand d-flex align-items-center fw-bold fs-4 text-primary" href="{% url 'home' %}">
-            <div class="bg-primary text-white rounded-3 p-2 me-2 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+            <div class="bg-primary text-white rounded-3 p-2 me-2 d-flex align-items-center justify-content-center"
+                 style="width: 40px; height: 40px;">
                 <i class="bi bi-shop"></i>
             </div>
             <span class="tracking-tight">MyShop <span class="text-dark">Admin</span></span>
         </a>
 
-        <!-- Кнопка гамбургер для мобилок -->
-        <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
 
         <div class="collapse navbar-collapse" id="navbarNav">
-            <!-- Центрированный поиск -->
             <form class="d-flex ms-auto me-lg-4 my-3 my-lg-0 position-relative shadow-sm rounded-pill overflow-hidden border"
                   method="get"
                   action="{% url 'categories' %}"
@@ -31,46 +30,72 @@
             </form>
 
             <ul class="navbar-nav align-items-center">
-                <!-- Ссылка Категории -->
                 <li class="nav-item me-lg-2">
                     <a href="{% url 'categories' %}"
-                       class="nav-link px-3 rounded-pill fw-medium {% if 'category' in request.resolver_match.url_name %}active bg-primary text-white shadow-sm{% else %}text-secondary{% endif %}">
+                       class="nav-link px-3 rounded-pill fw-medium {% if 'categor' in request.resolver_match.url_name %}active bg-primary text-white shadow-sm{% else %}text-secondary{% endif %}">
                         <i class="bi bi-grid-fill me-1"></i> Категории
                     </a>
                 </li>
-                <!-- Ссылка Товары -->
-                <li class="nav-item me-lg-3">
+
+                <li class="nav-item me-lg-2">
                     <a href="{% url 'product_list' %}"
                        class="nav-link px-3 rounded-pill fw-medium {% if 'product' in request.resolver_match.url_name %}active bg-primary text-white shadow-sm{% else %}text-secondary{% endif %}">
                         <i class="bi bi-box-seam-fill me-1"></i> Товары
                     </a>
                 </li>
 
-                <!-- Разделитель для мобилок -->
+                <li class="nav-item me-lg-3">
+                    <a href="{% url 'cart:cart_detail' %}"
+                       class="nav-link px-3 rounded-pill fw-medium position-relative d-flex align-items-center gap-2 transition-all
+           {% if request.resolver_match.namespace == 'cart' %}bg-primary text-white shadow-sm{% else %}bg-light text-dark border{% endif %}"
+                       style="transition: 0.3s;">
+
+                        <div class="position-relative">
+                            <i class="bi bi-bag-heart fs-5"></i>
+                            {% if cart|length > 0 %}
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-circle bg-danger border border-white"
+                                      style="font-size: 0.65rem; padding: 0.35em 0.5em; margin-top: -2px;">
+                        {{ cart|length }}
+                    </span>
+                            {% endif %}
+                        </div>
+
+                        <span class="d-none d-xl-inline small">
+                {% if cart.get_total_price > 0 %}
+                    {{ cart.get_total_price }} ₽
+                {% else %}
+                    Корзина
+                {% endif %}
+            </span>
+
+                        <span class="d-lg-none">Корзина</span>
+                    </a>
+                </li>
+
                 <hr class="d-lg-none text-muted w-100 my-2">
 
                 {% if user.is_authenticated %}
-                    <!-- Пользователь авторизован -->
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle d-flex align-items-center p-0 border-0"
-                           href="#"
-                           id="profileDropdown"
-                           role="button"
-                           data-bs-toggle="dropdown"
-                           aria-expanded="false">
-                            <div class="bg-light rounded-circle d-flex align-items-center justify-content-center text-primary fw-bold border" style="width: 40px; height: 40px;">
-                                {{ user.username|default:"U"|slice:":1"|upper }}
+                           href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center fw-bold border border-primary border-opacity-25"
+                                 style="width: 40px; height: 40px;">
+                                {{ user.username|slice:":1"|upper }}
                             </div>
-                            <!-- Имя пользователя (показывается только на мобилках рядом с кружком) -->
-                            <span class="ms-2 d-lg-none text-dark">{{ user.username }}</span>
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2" aria-labelledby="profileDropdown">
-                            <li><h6 class="dropdown-header text-dark fw-bold border-bottom pb-2">{{ user.username }}</h6></li>
-                            <li><a class="dropdown-item mt-2" href="#"><i class="bi bi-person me-2"></i> Профиль</a></li>
-                            <li><a class="dropdown-item" href="#"><i class="bi bi-gear me-2"></i> Настройки</a></li>
-                            <li><hr class="dropdown-divider"></li>
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2 rounded-4 p-2"
+                            aria-labelledby="profileDropdown">
+                            <li>
+                                <h6 class="dropdown-header text-dark fw-bold border-bottom pb-2 mb-2">{{ user.username }}</h6>
+                            </li>
+                            <li><a class="dropdown-item rounded-pill" href="#"><i class="bi bi-person me-2"></i> Профиль</a>
+                            </li>
+                            <li><a class="dropdown-item rounded-pill" href="#"><i class="bi bi-gear me-2"></i> Настройки</a>
+                            </li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
                             <li class="px-2">
-                                <!-- Форма выхода для Django 5.0 -->
                                 <form action="{% url 'logout' %}" method="post">
                                     {% csrf_token %}
                                     <button type="submit" class="btn btn-outline-danger btn-sm w-100 rounded-pill">
@@ -81,9 +106,9 @@
                         </ul>
                     </li>
                 {% else %}
-                    <!-- Пользователь НЕ авторизован -->
                     <li class="nav-item d-flex gap-2">
-                        <a href="{% url 'login' %}" class="btn btn-light rounded-pill px-4 fw-medium border text-secondary">Вход</a>
+                        <a href="{% url 'login' %}"
+                           class="btn btn-light rounded-pill px-4 fw-medium border text-secondary">Вход</a>
                         <a href="{% url 'register' %}" class="btn btn-primary rounded-pill px-4 fw-medium shadow-sm">Регистрация</a>
                     </li>
                 {% endif %}

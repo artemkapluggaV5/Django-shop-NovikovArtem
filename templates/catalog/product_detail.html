@@ -2,7 +2,6 @@
 
 {% block content %}
 <div class="container py-5">
-    <!-- Кнопка назад -->
     <div class="mb-4">
         <a href="{% url 'product_list' %}" class="text-decoration-none text-muted small shadow-sm bg-white px-3 py-2 rounded-pill border">
             <i class="bi bi-arrow-left me-1"></i> Назад к списку
@@ -10,7 +9,6 @@
     </div>
 
     <div class="row g-4">
-        <!-- Левая колонка: Изображение -->
         <div class="col-12 col-lg-5">
             <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
                 {% if product.image %}
@@ -23,7 +21,6 @@
             </div>
         </div>
 
-        <!-- Правая колонка: Инфо -->
         <div class="col-12 col-lg-7">
             <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 h-100">
                 <div class="d-flex justify-content-between align-items-start mb-3">
@@ -37,6 +34,22 @@
                         <div class="h2 fw-bold text-primary mb-0">{{ product.price }} ₽</div>
                         <small class="text-muted">Цена за единицу</small>
                     </div>
+                </div>
+
+                <div class="bg-light p-3 rounded-4 border mb-4 mt-4">
+                    <form action="{% url 'cart:cart_add' product.id %}" method="post" class="row g-3 align-items-end">
+                        {% csrf_token %}
+                        <div class="col-4 col-md-3">
+                            <label class="small text-muted fw-bold mb-1 d-block text-uppercase" style="font-size: 0.65rem;">Количество</label>
+                            {{ cart_product_form.quantity }}
+                        </div>
+                        <div class="col-8 col-md-9">
+                            {{ cart_product_form.update }}
+                            <button type="submit" class="btn btn-primary btn-lg w-100 rounded-pill shadow-sm">
+                                <i class="bi bi-cart-plus me-2"></i> В корзину
+                            </button>
+                        </div>
+                    </form>
                 </div>
 
                 <hr class="my-4 opacity-50">
@@ -65,12 +78,11 @@
                     </div>
                 </div>
 
-                <!-- Кнопки управления -->
-                <div class="d-flex gap-3 mt-auto pt-5">
-                    <a href="{% url 'product-update' product.id %}" class="btn btn-primary btn-lg px-4 rounded-pill shadow-sm flex-grow-1">
-                        <i class="bi bi-pencil-square me-2"></i> Редактировать
+                <div class="d-flex gap-3 mt-5">
+                    <a href="{% url 'product-update' product.id %}" class="btn btn-outline-secondary btn-sm px-3 rounded-pill">
+                        <i class="bi bi-pencil-square me-1"></i> Редактировать
                     </a>
-                    <a href="{% url 'product-delete' product.id %}" class="btn btn-outline-danger btn-lg px-4 rounded-pill shadow-sm">
+                    <a href="{% url 'product-delete' product.id %}" class="btn btn-outline-danger btn-sm px-3 rounded-pill">
                         <i class="bi bi-trash"></i>
                     </a>
                 </div>

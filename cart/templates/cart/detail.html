@@ -1,38 +1,111 @@
-{% extends "catalog/base.html" %}
+{% extends 'catalog/base.html' %}
 
 {% block content %}
-<div class="container py-5">
-    <h1 class="mb-4">Ваша корзина</h1>
-    <div class="card shadow-sm border-0 rounded-4 p-4">
-        <table class="table align-middle">
-            <thead>
-                <tr>
-                    <th>Товар</th>
-                    <th>Кол-во</th>
-                    <th>Цена</th>
-                    <th>Итого</th>
-                    <th>Удалить</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for item in cart %}
-                    {% with product=item.product %}
-                    <tr>
-                        <td>{{ product.name }}</td>
-                        <td>{{ item.quantity }}</td>
-                        <td>{{ item.price }} ₽</td>
-                        <td>{{ item.total_price }} ₽</td>
-                        <td><a href="{% url 'cart_remove' product.id %}" class="btn btn-sm btn-outline-danger">Удалить</a></td>
-                    </tr>
-                    {% endwith %}
-                {% endfor %}
-            </tbody>
-        </table>
-        <div class="text-end mt-3">
-            <h3>Итого: {{ cart.get_total_price }} ₽</h3>
-            <a href="{% url 'product_list' %}" class="btn btn-light rounded-pill">Продолжить покупки</a>
-            <button class="btn btn-primary rounded-pill px-4">Оформить заказ</button>
+    <div class="container py-5">
+
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-5 border-bottom pb-4">
+            <div>
+                <h1 class="display-6 fw-bold text-dark mb-1">Ваша корзина</h1>
+                <p class="text-muted mb-0">Выбрано позиций: <span class="badge bg-light text-dark border">{{ cart|length }}</span></p>
+            </div>
+            {% if cart %}
+                <div class="d-flex align-items-center gap-3 mt-3 mt-md-0">
+                    <div class="text-end me-2">
+                        <small class="text-muted d-block text-uppercase fw-bold" style="font-size: 0.7rem;">Итого к оплате</small>
+                        <span class="h3 fw-bold text-primary mb-0">{{ cart.get_total_price }} ₽</span>
+                    </div>
+                    <a href="#" class="btn btn-primary btn-lg shadow-sm px-4 rounded-pill">
+                        <i class="bi bi-wallet2 me-2"></i>Оформить заказ
+                    </a>
+                </div>
+            {% endif %}
         </div>
+
+        <div class="row g-4">
+            {% for item in cart %}
+                {% with product=item.product %}
+                <div class="col-12 col-md-6 col-lg-4 col-xl-3">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden hover-lift transition position-relative">
+
+                        <div class="bg-light d-flex align-items-center justify-content-center border-bottom" style="height: 180px;">
+                            {% if product.image %}
+                                <img src="{{ product.image.url }}" class="img-fluid w-100 h-100" style="object-fit: cover;" alt="{{ product.name }}">
+                            {% else %}
+                                <div class="text-center text-muted opacity-25">
+                                    <i class="bi bi-image display-4"></i>
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="card-body p-4 d-flex flex-column">
+                            <div class="mb-2">
+                                <span class="text-primary small fw-bold text-uppercase tracking-wider">
+                                    {{ product.category.name }}
+                                </span>
+                            </div>
+
+                            <a href="{% url 'product-detail' product.id %}" class="text-decoration-none mb-3">
+                                <h5 class="fw-bold text-dark mb-0 lh-base">{{ product.name|truncatechars:35 }}</h5>
+                            </a>
+
+                            <div class="mt-2 mb-3">
+                                <small class="text-muted d-block mb-1 fw-bold text-uppercase" style="font-size: 0.65rem;">Количество</small>
+                                <form id="form-{{ product.id }}" action="{% url 'cart:cart_add' product.id %}" method="post">
+                                    {% csrf_token %}
+                                    {{ item.update_quantity_form.quantity }}
+                                    {{ item.update_quantity_form.update }}
+                                </form>
+                            </div>
+
+                            <div class="mt-auto pt-2 d-flex align-items-end justify-content-between border-top">
+                                <div class="mt-2">
+                                    <small class="text-muted d-block">Сумма</small>
+                                    <span class="h5 fw-bold text-dark mb-0">{{ item.total_price }} <small>₽</small></span>
+                                </div>
+                                <div class="text-end">
+                                    <small class="text-muted d-block" style="font-size: 0.75rem;">{{ item.price }} ₽/шт</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-footer bg-white border-0 p-4 pt-0">
+                            <div class="d-flex gap-2">
+                                <button type="submit" form="form-{{ product.id }}"
+                                   class="btn btn-outline-primary flex-grow-1 rounded-pill py-2 fw-medium shadow-sm transition">
+                                    <i class="bi bi-arrow-clockwise me-1"></i> Обновить
+                                </button>
+
+                                <a href="{% url 'cart:cart_remove' product.id %}"
+                                   class="btn btn-outline-danger rounded-circle d-flex align-items-center justify-content-center shadow-sm transition"
+                                   style="width: 42px; height: 42px;" title="Удалить из корзины">
+                                    <i class="bi bi-trash3"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endwith %}
+            {% empty %}
+                <div class="col-12 text-center py-5">
+                    <div class="p-5 bg-white shadow-sm rounded-4">
+                        <i class="bi bi-bag-x display-1 text-light"></i>
+                        <h3 class="text-muted mt-4">Корзина пуста</h3>
+                        <p class="text-secondary mb-4">Вы еще не добавили ни одного товара.</p>
+                        <a href="{% url 'product_list' %}" class="btn btn-primary btn-lg rounded-pill px-5 shadow">
+                            К товарам
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        {% if cart %}
+        <div class="d-md-none mt-5">
+            <button class="btn btn-primary btn-lg w-100 rounded-pill shadow">
+                Оформить: {{ cart.get_total_price }} ₽
+            </button>
+        </div>
+        {% endif %}
     </div>
-</div>
+
 {% endblock %}

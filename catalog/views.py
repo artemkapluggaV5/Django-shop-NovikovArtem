@@ -3,6 +3,8 @@ from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import RedirectView, ListView, CreateView, UpdateView, DeleteView, DetailView
+
+from cart.forms import CartAddProductForm
 from .models import Category, Product
 from .forms import CategoryForm, ProductForm, EmployeeCreationForm
 
@@ -82,11 +84,21 @@ class ProductDetailView(DetailView):
 
 def register_view(request):
     if request.method == 'POST':
-        form = EmployeeCreationForm(request.POST) # Важно: используем твою форму
+        form = EmployeeCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            login(request, user) # Входим сразу после регистрации
+            login(request, user)
             return redirect('home')
     else:
         form = EmployeeCreationForm()
     return render(request, 'catalog/register.html', {'form': form})
+
+class ProductDetailView(DetailView):
+    model = Product
+    template_name = 'catalog/product_detail.html'
+    context_object_name = 'product'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['cart_product_form'] = CartAddProductForm()
+        return context

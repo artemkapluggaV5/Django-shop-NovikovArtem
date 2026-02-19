@@ -32,7 +32,6 @@
                             {% endif %}
                         </div>
 
-                        <!-- Место для фото -->
                         <div class="bg-light d-flex align-items-center justify-content-center border-bottom"
                              style="height: 200px;">
                             {% if product.image %}
@@ -46,7 +45,6 @@
                             {% endif %}
                         </div>
 
-                        <!-- Контент карточки -->
                         <div class="card-body p-4 d-flex flex-column">
                             <div class="mb-2">
                                 <a href="{% url 'category-detail' product.category.id %}"
@@ -69,17 +67,13 @@
                             </div>
                         </div>
 
-                        <!-- Кнопки управления (вылетают при наведении или всегда снизу) -->
-                        <!-- Кнопки управления -->
                         <div class="card-footer bg-white border-0 p-4 pt-0">
                             <div class="d-flex gap-2">
-                                <!-- Кнопка редактирования (основная) -->
                                 <a href="{% url 'product-update' product.id %}"
                                    class="btn btn-outline-primary flex-grow-1 rounded-pill py-2 fw-medium shadow-sm transition">
                                     <i class="bi bi-pencil-square me-1"></i> Изменить
                                 </a>
 
-                                <!-- Кнопка удаления (акцентная) -->
                                 <a href="{% url 'product-delete' product.id %}"
                                    class="btn btn-outline-danger rounded-circle d-flex align-items-center justify-content-center shadow-sm transition"
                                    style="width: 42px; height: 42px;" title="Удалить">
@@ -90,7 +84,6 @@
                     </div>
                 </div>
             {% empty %}
-                <!-- Пустое состояние -->
                 <div class="col-12 text-center py-5">
                     <div class="p-5 bg-white shadow-sm rounded-4">
                         <i class="bi bi-box2 display-1 text-light"></i>
@@ -104,25 +97,4 @@
             {% endfor %}
         </div>
     </div>
-
-    <!-- Дополнительные стили для "Вау-эффекта" -->
-    <style>
-        .hover-lift {
-            transition: transform 0.25s ease-in-out, box-shadow 0.25s ease-in-out;
-        }
-
-        .hover-lift:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 1.5rem 3rem rgba(0, 0, 0, 0.1) !important;
-        }
-
-        .tracking-wider {
-            letter-spacing: 0.05em;
-            font-size: 0.75rem;
-        }
-
-        .transition {
-            transition: all 0.3s ease;
-        }
-    </style>
 {% endblock %}
