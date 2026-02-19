@@ -1,6 +1,7 @@
 from django.db import models
 
 class Category(models.Model):
+    order = models.PositiveIntegerField(default=0, verbose_name='Порядок')
     name = models.CharField(
         max_length=200,
         unique=True,
@@ -28,6 +29,7 @@ class Category(models.Model):
     class Meta:
         verbose_name = 'Категория'
         verbose_name_plural = 'Категории'
+        ordering = ['order', 'name']
 
     def __str__(self):
         return self.name

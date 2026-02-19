@@ -1,8 +1,11 @@
 from django.contrib.auth import login
 from django.contrib.auth.forms import UserCreationForm
+from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
+from django.views.decorators.http import require_POST
 from django.views.generic import RedirectView, ListView, CreateView, UpdateView, DeleteView, DetailView
+import json
 
 from cart.forms import CartAddProductForm
 from .models import Category, Product
@@ -102,3 +105,18 @@ class ProductDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         context['cart_product_form'] = CartAddProductForm()
         return context
+
+
+@require_POST
+def update_category_order(request):
+    try:
+        data = json.loads(request.body)
+        order_ids = data.get('order', [])
+
+        # Обновляем поле order для каждой категории
+        for index, cat_id in enumerate(order_ids):
+            Category.objects.filter(id=cat_id).update(order=index)
+
+        return JsonResponse({'status': 'ok'})
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
