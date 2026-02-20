@@ -28,7 +28,8 @@
                     </div>
 
                     <div class="card-body p-4 p-md-5">
-                        <form method="post" novalidate>
+                        <!-- ВАЖНО: Добавлен enctype для работы с файлами -->
+                        <form method="post" enctype="multipart/form-data" novalidate>
                             {% csrf_token %}
 
                             {% for field in form %}
@@ -45,22 +46,42 @@
                                             </label>
                                         </div>
                                     {% else %}
-                                        <!-- Логика для обычных текстовых полей (ваша текущая) -->
                                         <label for="{{ field.id_for_label }}" class="form-label fw-bold text-dark px-1">
                                             {{ field.label }}
                                         </label>
                                         <div class="input-group shadow-sm rounded-3 overflow-hidden">
-            <span class="input-group-text bg-light border-end-0">
-                {% if 'name' in field.name %}<i class="bi bi-tag text-muted"></i>
-                {% elif 'slug' in field.name %}<i class="bi bi-link-45deg text-muted"></i>
-                {% else %}<i class="bi bi-text-paragraph text-muted"></i>{% endif %}
-            </span>
-                                            <input type="{{ field.field.widget.input_type|default:'text' }}"
-                                                   name="{{ field.name }}"
-                                                   id="{{ field.id_for_label }}"
-                                                   class="form-control border-start-0 py-2 {% if field.errors %}is-invalid{% endif %}"
-                                                   placeholder="Введите {{ field.label|lower }}..."
-                                                   value="{{ field.value|default:'' }}">
+                                            <span class="input-group-text bg-light border-end-0">
+                                                {% if 'name' in field.name %}<i class="bi bi-tag text-muted"></i>
+                                                {% elif 'slug' in field.name %}<i class="bi bi-link-45deg text-muted"></i>
+                                                {% elif 'image' in field.name %}<i class="bi bi-image text-muted"></i>
+                                                {% else %}<i class="bi bi-text-paragraph text-muted"></i>{% endif %}
+                                            </span>
+
+                                            {% if field.field.widget.input_type == 'file' %}
+                                                <!-- Логика для поля загрузки картинки -->
+                                                <div class="form-control border-start-0 py-2">
+                                                    <input type="file" name="{{ field.name }}" id="{{ field.id_for_label }}" class="w-100">
+                                                    {% if field.value %}
+                                                        <div class="mt-2 small text-muted">
+                                                            <i class="bi bi-file-earmark-check me-1"></i> Текущий файл:
+                                                            <a href="{{ field.value.url }}" target="_blank" class="text-decoration-none">{{ field.value.name }}</a>
+                                                        </div>
+                                                    {% endif %}
+                                                </div>
+                                            {% elif field.name == 'description' %}
+                                                <!-- Логика для многострочного текста -->
+                                                <textarea name="{{ field.name }}" id="{{ field.id_for_label }}"
+                                                          class="form-control border-start-0 py-2" rows="3"
+                                                          placeholder="Введите описание...">{{ field.value|default:'' }}</textarea>
+                                            {% else %}
+                                                <!-- Обычные текстовые поля -->
+                                                <input type="{{ field.field.widget.input_type|default:'text' }}"
+                                                       name="{{ field.name }}"
+                                                       id="{{ field.id_for_label }}"
+                                                       class="form-control border-start-0 py-2 {% if field.errors %}is-invalid{% endif %}"
+                                                       placeholder="Введите {{ field.label|lower }}..."
+                                                       value="{{ field.value|default:'' }}">
+                                            {% endif %}
                                         </div>
                                     {% endif %}
 
@@ -111,5 +132,4 @@
             </div>
         </div>
     </div>
-
 {% endblock %}

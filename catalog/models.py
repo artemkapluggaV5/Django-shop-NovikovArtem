@@ -24,7 +24,12 @@ class Category(models.Model):
         auto_now_add=True,
         verbose_name='Дата создания'
     )
-
+    image = models.ImageField(
+        upload_to='categories/',
+        blank=True,
+        null=True,
+        verbose_name='Изображение'
+    )
 
     class Meta:
         verbose_name = 'Категория'
@@ -71,6 +76,12 @@ class Product(models.Model):
     updated_at = models.DateTimeField(
         auto_now=True,
         verbose_name='Дата обновления'
+    )
+    image = models.ImageField(
+        upload_to='products/',
+        blank=True,
+        null=True,
+        verbose_name='Изображение'
     )
 
     class Meta:
