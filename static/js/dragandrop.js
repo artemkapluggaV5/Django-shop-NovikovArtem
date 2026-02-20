@@ -2,6 +2,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const container = document.getElementById('sortable-container');
     if (!container) return;
 
+    const notyf = new Notyf({
+        duration: 3000,
+        position: { x: 'right', y: 'bottom' },
+    });
+
     const updateUrl = container.getAttribute('data-url');
     const csrfToken = container.getAttribute('data-csrf');
 
@@ -22,6 +27,17 @@ document.addEventListener('DOMContentLoaded', function() {
                     'X-CSRFToken': csrfToken
                 },
                 body: JSON.stringify({ order: order })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'ok') {
+                    notyf.success('Порядок успешно сохранен!');
+                } else {
+                    notyf.error('Ошибка: ' + (data.message || 'не удалось сохранить'));
+                }
+            })
+            .catch(error => {
+                notyf.error('Ошибка сети или сервера');
             });
         }
     });
