@@ -20,14 +20,14 @@ class CategoryListView(ListView):
     model = Category
     template_name = 'catalog/catalog_list.html'
     context_object_name = 'categories'
+    ordering = ['order']
 
     def get_queryset(self):
-        queryset = super().get_queryset()
+        queryset = super().get_queryset().order_by('order')
         q = self.request.GET.get('q')
         if q:
             queryset = queryset.filter(name__icontains=q)
         return queryset
-
 
 class CategoryCreateView(CreateView):
     model = Category
@@ -113,10 +113,20 @@ def update_category_order(request):
         data = json.loads(request.body)
         order_ids = data.get('order', [])
 
-        # Обновляем поле order для каждой категории
         for index, cat_id in enumerate(order_ids):
             Category.objects.filter(id=cat_id).update(order=index)
 
+        return JsonResponse({'status': 'ok'})
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+
+@require_POST
+def update_product_order(request):
+    try:
+        data = json.loads(request.body)
+        order_ids = data.get('order', [])
+        for index, prod_id in enumerate(order_ids):
+            Product.objects.filter(id=prod_id).update(order=index) # Убедитесь, что у Product есть поле order
         return JsonResponse({'status': 'ok'})
     except Exception as e:
         return JsonResponse({'status': 'error', 'message': str(e)}, status=400)

@@ -41,6 +41,7 @@ class Category(models.Model):
 
 
 class Product(models.Model):
+    order = models.PositiveIntegerField(default=0)
     category = models.ForeignKey(
         Category,
         on_delete=models.CASCADE,
@@ -87,6 +88,7 @@ class Product(models.Model):
     class Meta:
         verbose_name = 'Товар'
         verbose_name_plural = 'Товары'
+        ordering = ['order']
 
     def __str__(self):
         return self.name

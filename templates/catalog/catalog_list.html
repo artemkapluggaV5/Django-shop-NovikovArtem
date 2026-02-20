@@ -1,5 +1,5 @@
 {% extends 'catalog/base.html' %}
-{% load static %} <!-- Не забудьте загрузить статику -->
+{% load static %}
 
 {% block content %}
 <div class="container py-5">
@@ -14,11 +14,6 @@
         </a>
     </div>
 
-    <!--
-       ВАЖНО:
-       1. ID теперь sortable-container
-       2. Добавлены data-атрибуты для URL и CSRF
-    -->
     <div class="row g-4"
          id="sortable-container"
          data-url="{% url 'update_category_order' %}"
@@ -91,8 +86,8 @@
     </div>
 </div>
 
-<!-- Подключаем ваш внешний файл -->
-<script src="{% static 'js/draganddrop.js' %}"></script>
+<script src="{% static 'js/dragandrop.js' %}"></script>
+
 
 <style>
     .sortable-ghost { opacity: 0.4; transform: scale(0.95); background-color: #f8f9fa !important; }

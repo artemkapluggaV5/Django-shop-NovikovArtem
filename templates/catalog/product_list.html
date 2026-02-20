@@ -1,57 +1,52 @@
 {% extends 'catalog/base.html' %}
+{% load static %}
 
 {% block content %}
     <div class="container py-5">
-
         <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-5 border-bottom pb-4">
             <div>
                 <h1 class="display-6 fw-bold text-dark mb-1">Товары</h1>
-                <p class="text-muted mb-0">Всего позиций в каталоге: <span
-                        class="badge bg-light text-dark border">{{ products|length }}</span></p>
+                <p class="text-muted mb-0">Всего позиций: <span class="badge bg-light text-dark border">{{ products|length }}</span></p>
+                <p class="text-muted small">Перетаскивайте за изображение, чтобы изменить порядок</p>
             </div>
-            <a href="{% url 'product-create' %}"
-               class="btn btn-primary btn-lg shadow-sm px-4 rounded-pill mt-3 mt-md-0">
+            <a href="{% url 'product-create' %}" class="btn btn-primary btn-lg shadow-sm px-4 rounded-pill mt-3 mt-md-0">
                 <i class="bi bi-plus-circle-fill me-2"></i>Добавить товар
             </a>
         </div>
 
-        <div class="row g-4">
+        <div class="row g-4" id="sortable-container"
+             data-url="{% url 'update_product_order' %}"
+             data-csrf="{{ csrf_token }}">
+
             {% for product in products %}
-                <div class="col-12 col-md-6 col-lg-4 col-xl-3">
+                <div class="col-12 col-md-6 col-lg-4 col-xl-3 item-sortable" data-id="{{ product.id }}">
                     <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden hover-lift transition position-relative">
 
-                        <!-- Статус товара -->
                         <div class="position-absolute top-0 end-0 m-3 z-index-1">
                             {% if product.is_active %}
-                                <span class="badge bg-success shadow-sm rounded-pill px-2 py-1">
-                                    <i class="bi bi-check-lg"></i>
-                                </span>
+                                <span class="badge bg-success shadow-sm rounded-pill px-2 py-1"><i class="bi bi-check-lg"></i></span>
                             {% else %}
-                                <span class="badge bg-warning text-dark shadow-sm rounded-pill px-2 py-1">
-                                    <i class="bi bi-pause-fill"></i>
-                                </span>
+                                <span class="badge bg-warning text-dark shadow-sm rounded-pill px-2 py-1"><i class="bi bi-pause-fill"></i></span>
                             {% endif %}
                         </div>
 
-                        <!-- БЛОК КАРТИНКИ -->
-                        <div class="bg-light d-flex align-items-center justify-content-center border-bottom overflow-hidden"
-                             style="height: 200px;">
+                        <div class="drag-handle bg-light d-flex align-items-center justify-content-center border-bottom overflow-hidden position-relative"
+                             style="height: 200px; cursor: grab;">
                             {% if product.image %}
-                                <!-- Добавил стиль для корректного отображения -->
-                                <img src="{{ product.image.url }}" class="img-fluid w-100 h-100"
-                                     style="object-fit: cover;" alt="{{ product.name }}">
+                                <img src="{{ product.image.url }}" class="img-fluid w-100 h-100" style="object-fit: cover;" alt="{{ product.name }}">
                             {% else %}
                                 <div class="text-center text-muted opacity-25">
                                     <i class="bi bi-image display-4"></i>
-                                    <p class="small mb-0 mt-2">Нет фото</p>
                                 </div>
                             {% endif %}
+                            <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-dark bg-opacity-10 opacity-0 hover-opacity-100 transition">
+                                <i class="bi bi-grip-vertical text-white fs-1"></i>
+                            </div>
                         </div>
 
                         <div class="card-body p-4 d-flex flex-column">
                             <div class="mb-2">
-                                <a href="{% url 'category-detail' product.category.id %}"
-                                   class="text-decoration-none small text-primary fw-bold text-uppercase tracking-wider">
+                                <a href="{% url 'category-detail' product.category.id %}" class="text-decoration-none small text-primary fw-bold text-uppercase">
                                     <i class="bi bi-folder me-1"></i>{{ product.category.name }}
                                 </a>
                             </div>
@@ -63,8 +58,7 @@
                             <div class="mt-auto pt-3 d-flex align-items-end justify-content-between">
                                 <div>
                                     <small class="text-muted d-block">Цена</small>
-                                    <span class="h4 fw-bold text-dark mb-0">{{ product.price }} <small class="fw-normal"
-                                                                                                       style="font-size: 0.9rem;">₽</small></span>
+                                    <span class="h4 fw-bold text-dark mb-0">{{ product.price }} <small>₽</small></span>
                                 </div>
                                 <span class="text-muted small fw-light">ID: #{{ product.id }}</span>
                             </div>
@@ -72,41 +66,27 @@
 
                         <div class="card-footer bg-white border-0 p-4 pt-0">
                             <div class="d-flex gap-2">
-                                <a href="{% url 'product-update' product.id %}"
-                                   class="btn btn-outline-primary flex-grow-1 rounded-pill py-2 fw-medium shadow-sm transition">
+                                <a href="{% url 'product-update' product.id %}" class="btn btn-outline-primary flex-grow-1 rounded-pill py-2 fw-medium shadow-sm transition">
                                     <i class="bi bi-pencil-square me-1"></i> Изменить
                                 </a>
-
-                                <a href="{% url 'product-delete' product.id %}"
-                                   class="btn btn-outline-danger rounded-circle d-flex align-items-center justify-content-center shadow-sm transition"
-                                   style="width: 42px; height: 42px;" title="Удалить">
+                                <a href="{% url 'product-delete' product.id %}" class="btn btn-outline-danger rounded-circle d-flex align-items-center justify-content-center shadow-sm transition" style="width: 42px; height: 42px;">
                                     <i class="bi bi-trash3"></i>
                                 </a>
                             </div>
                         </div>
                     </div>
                 </div>
-            {% empty %}
-                <div class="col-12 text-center py-5">
-                    <div class="p-5 bg-white shadow-sm rounded-4">
-                        <i class="bi bi-box2 display-1 text-light"></i>
-                        <h3 class="text-muted mt-4">Товаров пока нет</h3>
-                        <p class="text-secondary mb-4">Каталог пуст. Добавьте первый товар, чтобы увидеть его здесь.</p>
-                        <a href="{% url 'product-create' %}" class="btn btn-primary btn-lg rounded-pill px-5">
-                            Создать товар
-                        </a>
-                    </div>
-                </div>
             {% endfor %}
         </div>
     </div>
 
+<script src="{% static 'js/dragandrop.js' %}"></script>
+
 <style>
-    .hover-lift:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 1rem 3rem rgba(0,0,0,0.1) !important;
-    }
+    .hover-lift:hover { transform: translateY(-5px); box-shadow: 0 1rem 3rem rgba(0,0,0,0.1) !important; }
     .transition { transition: all 0.3s ease; }
-    .z-index-1 { z-index: 1; }
+    .hover-opacity-100 { opacity: 0; }
+    .drag-handle:hover .hover-opacity-100 { opacity: 1; }
+    .sortable-ghost { opacity: 0.4; filter: grayscale(1); }
 </style>
 {% endblock %}
