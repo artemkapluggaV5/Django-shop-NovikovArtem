@@ -1,9 +1,12 @@
+from decimal import Decimal
+from django.db import models
 from django.contrib.auth import login
 from django.contrib.auth.forms import UserCreationForm
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.views.decorators.http import require_POST
+from django.forms.models import model_to_dict
 from django.views.generic import RedirectView, ListView, CreateView, UpdateView, DeleteView, DetailView
 import json
 
@@ -12,11 +15,58 @@ from .models import Category, Product
 from .forms import CategoryForm, ProductForm, EmployeeCreationForm
 
 
+class JsonResponseMixin:
+    """Финальная бронебойная версия: вообще не вызывает .url без проверки"""
+
+    def render_to_response(self, context, **response_kwargs):
+        fmt = self.request.GET.get('format', '').strip('/').lower()
+        if fmt == 'json' or self.request.headers.get('Accept') == 'application/json':
+            return self.render_to_json_response(context)
+        return super().render_to_response(context, **response_kwargs)
+
+    def render_to_json_response(self, context):
+        def serialize_item(obj):
+            data = {}
+            # Перебираем все поля модели
+            for field in obj._meta.fields:
+                name = field.name
+                value = getattr(obj, name)
+
+                # Проверка на картинку/файл (ImageField или FileField)
+                # Мы НЕ трогаем .url, пока не проверим наличие файла через bool(value)
+                if isinstance(field, (models.FileField, models.ImageField)):
+                    if value and value.name:  # Самая надежная проверка в Django
+                        try:
+                            data[name] = value.url
+                        except ValueError:
+                            data[name] = None
+                    else:
+                        data[name] = None
+
+                # Проверка на цену (Decimal)
+                elif isinstance(value, Decimal):
+                    data[name] = float(value)
+
+                # Все остальное
+                else:
+                    data[name] = value
+            return data
+
+        if 'object_list' in context:
+            data = [serialize_item(obj) for obj in context['object_list']]
+        elif 'object' in context:
+            data = serialize_item(context['object'])
+        else:
+            data = context
+
+        return JsonResponse(data, safe=False)
+
+
 class HomeRedirectView(RedirectView):
     pattern_name = 'categories'
 
 
-class CategoryListView(ListView):
+class CategoryListView(JsonResponseMixin, ListView):
     model = Category
     template_name = 'catalog/catalog_list.html'
     context_object_name = 'categories'
@@ -29,58 +79,58 @@ class CategoryListView(ListView):
             queryset = queryset.filter(name__icontains=q)
         return queryset
 
-class CategoryCreateView(CreateView):
+class CategoryCreateView(JsonResponseMixin, CreateView):
     model = Category
     form_class = CategoryForm
     template_name = 'catalog/category_form.html'
     success_url = reverse_lazy('categories')
 
 
-class CategoryUpdateView(UpdateView):
+class CategoryUpdateView(JsonResponseMixin, UpdateView):
     model = Category
     form_class = CategoryForm
     template_name = 'catalog/category_form.html'
     success_url = reverse_lazy('categories')
 
 
-class CategoryDeleteView(DeleteView):
+class CategoryDeleteView(JsonResponseMixin, DeleteView):
     model = Category
     success_url = reverse_lazy('categories')
 
 
-class ProductListView(ListView):
+class ProductListView(JsonResponseMixin, ListView):
     model = Product
     queryset = Product.objects.select_related('category')
     template_name = 'catalog/product_list.html'
     context_object_name = 'products'
 
 
-class ProductCreateView(CreateView):
+class ProductCreateView(JsonResponseMixin, CreateView):
     model = Product
     form_class = ProductForm
     template_name = 'catalog/product_form.html'
     success_url = reverse_lazy('product_list')
 
 
-class ProductUpdateView(UpdateView):
+class ProductUpdateView(JsonResponseMixin, UpdateView):
     model = Product
     form_class = ProductForm
     template_name = 'catalog/product_form.html'
     success_url = reverse_lazy('product_list')
 
 
-class ProductDeleteView(DeleteView):
+class ProductDeleteView(JsonResponseMixin, DeleteView):
     model = Product
     success_url = reverse_lazy('product_list')
 
 
-class CategoryDetailView(DetailView):
+class CategoryDetailView(JsonResponseMixin, DetailView):
     model = Category
     template_name = 'catalog/category_detail.html'  # создай этот файл
     context_object_name = 'category'
 
 
-class ProductDetailView(DetailView):
+class ProductDetailView(JsonResponseMixin, DetailView):
     model = Product
     template_name = 'catalog/product_detail.html'  # и этот
     context_object_name = 'product'
@@ -96,7 +146,7 @@ def register_view(request):
         form = EmployeeCreationForm()
     return render(request, 'catalog/register.html', {'form': form})
 
-class ProductDetailView(DetailView):
+class ProductDetailView(JsonResponseMixin, DetailView):
     model = Product
     template_name = 'catalog/product_detail.html'
     context_object_name = 'product'
