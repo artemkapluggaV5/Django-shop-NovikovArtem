@@ -1,4 +1,5 @@
 from django.db import models
+from tinymce.models import HTMLField
 
 class Category(models.Model):
     order = models.PositiveIntegerField(default=0, verbose_name='Порядок')
@@ -12,7 +13,7 @@ class Category(models.Model):
         unique=True,
         verbose_name='URL-идентификатор'
     )
-    description = models.TextField(
+    description = HTMLField(
         blank=True,
         verbose_name='Описание'
     )
@@ -57,7 +58,7 @@ class Product(models.Model):
         unique=True,
         verbose_name='URL-идентификатор'
     )
-    description = models.TextField(
+    description = HTMLField(
         blank=True,
         verbose_name='Описание'
     )

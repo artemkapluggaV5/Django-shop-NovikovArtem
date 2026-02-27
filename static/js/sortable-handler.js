@@ -1,11 +1,8 @@
+import { showSuccess, showError } from './notifications.js';
+
 document.addEventListener('DOMContentLoaded', function() {
     const container = document.getElementById('sortable-container');
     if (!container) return;
-
-    const notyf = new Notyf({
-        duration: 3000,
-        position: { x: 'right', y: 'bottom' },
-    });
 
     const updateUrl = container.getAttribute('data-url');
     const csrfToken = container.getAttribute('data-csrf');
@@ -15,10 +12,8 @@ document.addEventListener('DOMContentLoaded', function() {
         handle: '.drag-handle',
         ghostClass: 'sortable-ghost',
         onEnd: function() {
-            let order = [];
-            container.querySelectorAll('.item-sortable').forEach(function(el) {
-                order.push(el.getAttribute('data-id'));
-            });
+            const order = Array.from(container.querySelectorAll('.item-sortable'))
+                               .map(el => el.getAttribute('data-id'));
 
             fetch(updateUrl, {
                 method: 'POST',
@@ -31,13 +26,14 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(response => response.json())
             .then(data => {
                 if (data.status === 'ok') {
-                    notyf.success('Порядок успешно сохранен!');
+                    showSuccess('Порядок успешно сохранен!');
                 } else {
-                    notyf.error('Ошибка: ' + (data.message || 'не удалось сохранить'));
+                    showError(data.message);
                 }
             })
             .catch(error => {
-                notyf.error('Ошибка сети или сервера');
+                console.error('Fetch error:', error);
+                showError('Ошибка сети или сервера');
             });
         }
     });
