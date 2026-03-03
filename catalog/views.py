@@ -1,5 +1,6 @@
 from decimal import Decimal
 from django.db import models
+from django.db.models import Q
 from django.contrib.auth import login
 from django.contrib.auth.forms import UserCreationForm
 from django.http import JsonResponse
@@ -16,7 +17,6 @@ from .forms import CategoryForm, ProductForm, EmployeeCreationForm
 
 
 class JsonResponseMixin:
-    """Финальная бронебойная версия: вообще не вызывает .url без проверки"""
 
     def render_to_response(self, context, **response_kwargs):
         fmt = self.request.GET.get('format', '').strip('/').lower()
@@ -27,15 +27,12 @@ class JsonResponseMixin:
     def render_to_json_response(self, context):
         def serialize_item(obj):
             data = {}
-            # Перебираем все поля модели
             for field in obj._meta.fields:
                 name = field.name
                 value = getattr(obj, name)
 
-                # Проверка на картинку/файл (ImageField или FileField)
-                # Мы НЕ трогаем .url, пока не проверим наличие файла через bool(value)
                 if isinstance(field, (models.FileField, models.ImageField)):
-                    if value and value.name:  # Самая надежная проверка в Django
+                    if value and value.name:
                         try:
                             data[name] = value.url
                         except ValueError:
@@ -43,11 +40,9 @@ class JsonResponseMixin:
                     else:
                         data[name] = None
 
-                # Проверка на цену (Decimal)
                 elif isinstance(value, Decimal):
                     data[name] = float(value)
 
-                # Все остальное
                 else:
                     data[name] = value
             return data
@@ -71,14 +66,14 @@ class CategoryListView(JsonResponseMixin, ListView):
     template_name = 'catalog/catalog_list.html'
     context_object_name = 'categories'
     ordering = ['order']
+    paginate_by = 12
 
     def get_queryset(self):
-        queryset = super().get_queryset().order_by('order')
+        queryset = Category.objects.all().order_by('order')
         q = self.request.GET.get('q')
         if q:
             queryset = queryset.filter(name__icontains=q)
         return queryset
-
 class CategoryCreateView(JsonResponseMixin, CreateView):
     model = Category
     form_class = CategoryForm
@@ -103,6 +98,14 @@ class ProductListView(JsonResponseMixin, ListView):
     queryset = Product.objects.select_related('category')
     template_name = 'catalog/product_list.html'
     context_object_name = 'products'
+    paginate_by = 20
+
+    def get_queryset(self):
+        queryset = Product.objects.select_related('category').all().order_by('order')
+        q = self.request.GET.get('q')
+        if q:
+            queryset = queryset.filter(name__icontains=q)
+        return queryset
 
 
 class ProductCreateView(JsonResponseMixin, CreateView):

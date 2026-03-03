@@ -6,14 +6,40 @@
         <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-5 border-bottom pb-4">
             <div>
                 <h1 class="display-6 fw-bold text-dark mb-1">Товары</h1>
-                <p class="text-muted mb-0">Всего позиций: <span class="badge bg-light text-dark border">{{ products|length }}</span></p>
+                <p class="text-muted mb-0">Всего позиций: <span
+                        class="badge bg-light text-dark border">{{ products|length }}</span></p>
                 <p class="text-muted small">Перетаскивайте за изображение, чтобы изменить порядок</p>
             </div>
-            <a href="{% url 'product-create' %}" class="btn btn-primary btn-lg shadow-sm px-4 rounded-pill mt-3 mt-md-0">
+            <a href="{% url 'product-create' %}"
+               class="btn btn-primary btn-lg shadow-sm px-4 rounded-pill mt-3 mt-md-0">
                 <i class="bi bi-plus-circle-fill me-2"></i>Добавить товар
             </a>
-        </div>
 
+        </div>
+        <div class="row mb-4">
+            <div class="col-12 col-md-6 col-lg-5">
+                <form method="get" action="{% url 'product_list' %}" class="d-flex position-relative">
+                    <div class="input-group shadow-sm rounded-pill overflow-hidden border">
+                <span class="input-group-text bg-white border-0 ps-3 text-muted">
+                    <i class="bi bi-search"></i>
+                </span>
+                        <input type="search"
+                               name="q"
+                               class="form-control border-0 shadow-none py-2"
+                               placeholder="Поиск по названию или категории..."
+                               value="{{ request.GET.q|default:'' }}">
+                        <button class="btn btn-primary px-4 fw-medium" type="submit">Найти</button>
+                    </div>
+
+                    {% if request.GET.q %}
+                        <a href="{% url 'product_list' %}"
+                           class="btn btn-link btn-sm text-decoration-none text-muted align-self-center ms-2">
+                            <i class="bi bi-x-circle"></i> Сбросить
+                        </a>
+                    {% endif %}
+                </form>
+            </div>
+        </div>
         <div class="row g-4" id="sortable-container"
              data-url="{% url 'update_product_order' %}"
              data-csrf="{{ csrf_token }}">
@@ -24,16 +50,19 @@
 
                         <div class="position-absolute top-0 end-0 m-3 z-index-1">
                             {% if product.is_active %}
-                                <span class="badge bg-success shadow-sm rounded-pill px-2 py-1"><i class="bi bi-check-lg"></i></span>
+                                <span class="badge bg-success shadow-sm rounded-pill px-2 py-1"><i
+                                        class="bi bi-check-lg"></i></span>
                             {% else %}
-                                <span class="badge bg-warning text-dark shadow-sm rounded-pill px-2 py-1"><i class="bi bi-pause-fill"></i></span>
+                                <span class="badge bg-warning text-dark shadow-sm rounded-pill px-2 py-1"><i
+                                        class="bi bi-pause-fill"></i></span>
                             {% endif %}
                         </div>
 
                         <div class="drag-handle bg-light d-flex align-items-center justify-content-center border-bottom overflow-hidden position-relative"
                              style="height: 200px; cursor: grab;">
                             {% if product.image %}
-                                <img src="{{ product.image.url }}" class="img-fluid w-100 h-100" style="object-fit: cover;" alt="{{ product.name }}">
+                                <img src="{{ product.image.url }}" class="img-fluid w-100 h-100"
+                                     style="object-fit: cover;" alt="{{ product.name }}">
                             {% else %}
                                 <div class="text-center text-muted opacity-25">
                                     <i class="bi bi-image display-4"></i>
@@ -46,13 +75,17 @@
 
                         <div class="card-body p-4 d-flex flex-column">
                             <div class="mb-2">
-                                <a href="{% url 'category-detail' product.category.id %}" class="text-decoration-none small text-primary fw-bold text-uppercase">
+                                <a href="{% url 'category-detail' product.category.id %}"
+                                   class="text-decoration-none small text-primary fw-bold text-uppercase">
                                     <i class="bi bi-folder me-1"></i>{{ product.category.name }}
                                 </a>
                             </div>
 
                             <a href="{% url 'product-detail' product.id %}" class="text-decoration-none mb-3">
-                                <h5 class="fw-bold text-dark mb-0 lh-base">{{ product.name|truncatechars:40 }}</h5>
+                                <h5 class="fw-bold text-dark mb-0 lh-base"
+                                    style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 3rem;">
+                                    {{ product.name }}
+                                </h5>
                             </a>
 
                             <div class="mt-auto pt-3 d-flex align-items-end justify-content-between">
@@ -66,10 +99,13 @@
 
                         <div class="card-footer bg-white border-0 p-4 pt-0">
                             <div class="d-flex gap-2">
-                                <a href="{% url 'product-update' product.id %}" class="btn btn-outline-primary flex-grow-1 rounded-pill py-2 fw-medium shadow-sm transition">
+                                <a href="{% url 'product-update' product.id %}"
+                                   class="btn btn-outline-primary flex-grow-1 rounded-pill py-2 fw-medium shadow-sm transition">
                                     <i class="bi bi-pencil-square me-1"></i> Изменить
                                 </a>
-                                <a href="{% url 'product-delete' product.id %}" class="btn btn-outline-danger rounded-circle d-flex align-items-center justify-content-center shadow-sm transition" style="width: 42px; height: 42px;">
+                                <a href="{% url 'product-delete' product.id %}"
+                                   class="btn btn-outline-danger rounded-circle d-flex align-items-center justify-content-center shadow-sm transition"
+                                   style="width: 42px; height: 42px;">
                                     <i class="bi bi-trash3"></i>
                                 </a>
                             </div>
@@ -79,14 +115,8 @@
             {% endfor %}
         </div>
     </div>
+    {% include "includes/pagination.html" %}
 
-<script src="{% static 'js/sortable-handler.js' %}"></script>
+    <script src="{% static 'js/sortable-handler.js' %}"></script>
 
-<style>
-    .hover-lift:hover { transform: translateY(-5px); box-shadow: 0 1rem 3rem rgba(0,0,0,0.1) !important; }
-    .transition { transition: all 0.3s ease; }
-    .hover-opacity-100 { opacity: 0; }
-    .drag-handle:hover .hover-opacity-100 { opacity: 1; }
-    .sortable-ghost { opacity: 0.4; filter: grayscale(1); }
-</style>
 {% endblock %}
