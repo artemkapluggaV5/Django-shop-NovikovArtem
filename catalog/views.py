@@ -13,7 +13,7 @@ import json
 
 from cart.forms import CartAddProductForm
 from .models import Category, Product
-from .forms import CategoryForm, ProductForm, EmployeeCreationForm
+from .forms import CategoryForm, ProductForm
 
 
 class JsonResponseMixin:
@@ -129,25 +129,14 @@ class ProductDeleteView(JsonResponseMixin, DeleteView):
 
 class CategoryDetailView(JsonResponseMixin, DetailView):
     model = Category
-    template_name = 'catalog/category_detail.html'  # создай этот файл
+    template_name = 'catalog/category_detail.html'
     context_object_name = 'category'
 
 
 class ProductDetailView(JsonResponseMixin, DetailView):
     model = Product
-    template_name = 'catalog/product_detail.html'  # и этот
+    template_name = 'catalog/product_detail.html'
     context_object_name = 'product'
-
-def register_view(request):
-    if request.method == 'POST':
-        form = EmployeeCreationForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            login(request, user)
-            return redirect('home')
-    else:
-        form = EmployeeCreationForm()
-    return render(request, 'catalog/register.html', {'form': form})
 
 class ProductDetailView(JsonResponseMixin, DetailView):
     model = Product
@@ -179,7 +168,7 @@ def update_product_order(request):
         data = json.loads(request.body)
         order_ids = data.get('order', [])
         for index, prod_id in enumerate(order_ids):
-            Product.objects.filter(id=prod_id).update(order=index) # Убедитесь, что у Product есть поле order
+            Product.objects.filter(id=prod_id).update(order=index)
         return JsonResponse({'status': 'ok'})
     except Exception as e:
         return JsonResponse({'status': 'error', 'message': str(e)}, status=400)

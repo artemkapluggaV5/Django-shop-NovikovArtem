@@ -2,7 +2,7 @@ from django.urls import path, include
 from catalog import views
 from django.contrib.auth import views as auth_views
 from django.conf import settings
-
+import users.views as user_views
 urlpatterns = [
     path('', views.HomeRedirectView.as_view(), name='home'),
 
@@ -16,9 +16,9 @@ urlpatterns = [
     path('products/<int:pk>/edit/', views.ProductUpdateView.as_view(), name='product-update'),
     path('products/<int:pk>/delete/', views.ProductDeleteView.as_view(), name='product-delete'),
     path('products/<int:pk>/', views.ProductDetailView.as_view(), name='product-detail'),
+    path('categories/update-order/', views.update_category_order, name='update_category_order'),
     path('login/', auth_views.LoginView.as_view(template_name='catalog/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
-    path('register/', views.register_view, name='register'),
-    path('categories/update-order/', views.update_category_order, name='update_category_order'),
+    path('register/', user_views.register_view, name='register'),
     path('update-product-order/', views.update_product_order, name='update_product_order'),
 ]
