@@ -22,6 +22,9 @@ class EmployeeAdmin(UserAdmin):
                 'password', 'is_active', 'is_staff', 'is_superuser',
             ],
         }),
+        ('Права доступа', {
+            'fields': ['user_permissions']
+        }),
     ]
 
     add_fieldsets = [
@@ -30,4 +33,5 @@ class EmployeeAdmin(UserAdmin):
                 'email', 'telegram_id', 'password1', 'password2'
             ],
         }),
+
     ]

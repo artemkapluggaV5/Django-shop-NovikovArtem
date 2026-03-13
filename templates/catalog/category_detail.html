@@ -1,56 +1,71 @@
 {% extends 'catalog/base.html' %}
 
 {% block content %}
-<div class="container py-5">
+    <div class="container py-5">
 
-    <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-5">
-        <div class="bg-primary bg-gradient p-5 text-white">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb mb-2">
-                    <li class="breadcrumb-item"><a href="{% url 'categories' %}" class="text-white opacity-75 text-decoration-none">Категории</a></li>
-                    <li class="breadcrumb-item active text-white fw-bold" aria-current="page">{{ category.name }}</li>
-                </ol>
-            </nav>
-            <h1 class="display-4 fw-bold mb-2">{{ category.name }}</h1>
-            <p class="lead mb-0 opacity-75">{{ category.description|default:"Описание категории уточняется..." }}</p>
-        </div>
-        <div class="card-body bg-white py-3 px-5 d-flex justify-content-between align-items-center">
-            <span class="text-muted">Всего товаров в категории: <strong class="text-dark">{{ category.products.count }}</strong></span>
-            <div class="gap-2 d-flex">
-                <a href="{% url 'category-update' category.id %}" class="btn btn-outline-primary rounded-pill btn-sm px-3">Изменить</a>
-                <a href="{% url 'product-create' %}" class="btn btn-primary rounded-pill btn-sm px-3">Добавить товар</a>
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-5">
+            <div class="bg-primary bg-gradient p-5 text-white">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-2">
+                        <li class="breadcrumb-item"><a href="{% url 'categories' %}"
+                                                       class="text-white opacity-75 text-decoration-none">Категории</a>
+                        </li>
+                        <li class="breadcrumb-item active text-white fw-bold"
+                            aria-current="page">{{ category.name }}</li>
+                    </ol>
+                </nav>
+
+                <h1 class="display-4 fw-bold mb-2">{{ category.name }}</h1>
+
+                <div class="lead opacity-75 mt-3 custom-rich-text">
+                    {% if category.description %}
+                        {{ category.description|safe }}
+                    {% else %}
+                        Описание категории уточняется...
+                    {% endif %}
+                </div>
             </div>
-        </div>
-    </div>
-
-    <h3 class="fw-bold mb-4 px-2 text-dark">Товары в этой категории</h3>
-    
-    <div class="row g-4">
-        {% for product in category.products.all %}
-        <div class="col-12 col-md-6 col-lg-4">
-            <div class="card border-0 shadow-sm rounded-4 h-100 hover-lift transition">
-                <div class="card-body p-4">
-                    <div class="d-flex justify-content-between mb-3">
-                        <span class="text-muted small">#{{ product.id }}</span>
-                        <span class="fw-bold text-primary">{{ product.price }} ₽</span>
-                    </div>
-                    <h5 class="fw-bold text-dark mb-2">{{ product.name }}</h5>
-                    <p class="text-muted small mb-4">{{ product.description|truncatewords:15 }}</p>
-                    <a href="{% url 'product-detail' product.id %}" class="btn btn-light w-100 rounded-pill border fw-medium">
-                        Смотреть детали
-                    </a>
+            <div class="card-body bg-white py-3 px-5 d-flex justify-content-between align-items-center">
+                <span class="text-muted">Всего товаров в категории: <strong
+                        class="text-dark">{{ category.products.count }}</strong></span>
+                <div class="gap-2 d-flex">
+                    <a href="{% url 'category-update' category.id %}"
+                       class="btn btn-outline-primary rounded-pill btn-sm px-3">Изменить</a>
+                    <a href="{% url 'product-create' %}" class="btn btn-primary rounded-pill btn-sm px-3">Добавить
+                        товар</a>
                 </div>
             </div>
         </div>
-        {% empty %}
-        <div class="col-12">
-            <div class="bg-light rounded-4 text-center py-5 border-dashed">
-                <i class="bi bi-box2 text-muted display-1 opacity-25"></i>
-                <p class="text-muted mt-3">В этой категории пока нет товаров.</p>
-            </div>
+
+        <h3 class="fw-bold mb-4 px-2 text-dark">Товары в этой категории</h3>
+
+        <div class="row g-4">
+            {% for product in category.products.all %}
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="card border-0 shadow-sm rounded-4 h-100 hover-lift transition">
+                        <div class="card-body p-4">
+                            <div class="d-flex justify-content-between mb-3">
+                                <span class="text-muted small">#{{ product.id }}</span>
+                                <span class="fw-bold text-primary">{{ product.price }} ₽</span>
+                            </div>
+                            <h5 class="fw-bold text-dark mb-2">{{ product.name }}</h5>
+                            <p class="text-muted small mb-4">{{ product.description|truncatewords:15 }}</p>
+                            <a href="{% url 'product-detail' product.id %}"
+                               class="btn btn-light w-100 rounded-pill border fw-medium">
+                                Смотреть детали
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="col-12">
+                    <div class="bg-light rounded-4 text-center py-5 border-dashed">
+                        <i class="bi bi-box2 text-muted display-1 opacity-25"></i>
+                        <p class="text-muted mt-3">В этой категории пока нет товаров.</p>
+                    </div>
+                </div>
+            {% endfor %}
         </div>
-        {% endfor %}
     </div>
-</div>
 
 {% endblock %}

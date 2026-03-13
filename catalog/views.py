@@ -1,4 +1,6 @@
 from decimal import Decimal
+
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.db import models
 from django.db.models import Q
 from django.contrib.auth import login
@@ -10,6 +12,9 @@ from django.views.decorators.http import require_POST
 from django.forms.models import model_to_dict
 from django.views.generic import RedirectView, ListView, CreateView, UpdateView, DeleteView, DetailView
 import json
+from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.admin.views.decorators import staff_member_required
+from django.utils.decorators import method_decorator
 
 from cart.forms import CartAddProductForm
 from .models import Category, Product
@@ -74,22 +79,28 @@ class CategoryListView(JsonResponseMixin, ListView):
         if q:
             queryset = queryset.filter(name__icontains=q)
         return queryset
-class CategoryCreateView(JsonResponseMixin, CreateView):
+
+@method_decorator(staff_member_required, name='dispatch')
+class CategoryCreateView(PermissionRequiredMixin, JsonResponseMixin, CreateView):
     model = Category
     form_class = CategoryForm
+    permission_required = 'catalog.add_category'
+    raise_exception = True
     template_name = 'catalog/category_form.html'
     success_url = reverse_lazy('categories')
 
-
-class CategoryUpdateView(JsonResponseMixin, UpdateView):
+@method_decorator(staff_member_required, name='dispatch')
+class CategoryUpdateView(PermissionRequiredMixin, JsonResponseMixin, UpdateView):
     model = Category
     form_class = CategoryForm
+    permission_required = 'catalog.change_category'
     template_name = 'catalog/category_form.html'
     success_url = reverse_lazy('categories')
 
-
-class CategoryDeleteView(JsonResponseMixin, DeleteView):
+@method_decorator(staff_member_required, name='dispatch')
+class CategoryDeleteView(PermissionRequiredMixin, JsonResponseMixin, DeleteView):
     model = Category
+    permission_required = 'catalog.delete_category'
     success_url = reverse_lazy('categories')
 
 
@@ -107,32 +118,36 @@ class ProductListView(JsonResponseMixin, ListView):
             queryset = queryset.filter(name__icontains=q)
         return queryset
 
-
-class ProductCreateView(JsonResponseMixin, CreateView):
+@method_decorator(staff_member_required, name='dispatch')
+class ProductCreateView(PermissionRequiredMixin, JsonResponseMixin, CreateView):
     model = Product
     form_class = ProductForm
+    permission_required = 'catalog.add_product'
     template_name = 'catalog/product_form.html'
     success_url = reverse_lazy('product_list')
 
-
-class ProductUpdateView(JsonResponseMixin, UpdateView):
+@method_decorator(staff_member_required, name='dispatch')
+class ProductUpdateView(PermissionRequiredMixin, JsonResponseMixin, UpdateView):
     model = Product
     form_class = ProductForm
+    permission_required = 'catalog.change_product'
     template_name = 'catalog/product_form.html'
     success_url = reverse_lazy('product_list')
 
-
-class ProductDeleteView(JsonResponseMixin, DeleteView):
+@method_decorator(staff_member_required, name='dispatch')
+class ProductDeleteView(PermissionRequiredMixin, JsonResponseMixin, DeleteView):
     model = Product
+    permission_required = 'catalog.delete_product'
     success_url = reverse_lazy('product_list')
 
-
+@method_decorator(login_required, name='dispatch')
 class CategoryDetailView(JsonResponseMixin, DetailView):
     model = Category
     template_name = 'catalog/category_detail.html'
     context_object_name = 'category'
 
 
+@method_decorator(login_required, name='dispatch')
 class ProductDetailView(JsonResponseMixin, DetailView):
     model = Product
     template_name = 'catalog/product_detail.html'
@@ -148,7 +163,7 @@ class ProductDetailView(JsonResponseMixin, DetailView):
         context['cart_product_form'] = CartAddProductForm()
         return context
 
-
+@permission_required('catalog.change_category', raise_exception=True)
 @require_POST
 def update_category_order(request):
     try:
@@ -162,6 +177,7 @@ def update_category_order(request):
     except Exception as e:
         return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
 
+@permission_required('catalog.change_product', raise_exception=True)
 @require_POST
 def update_product_order(request):
     try:
@@ -172,3 +188,6 @@ def update_product_order(request):
         return JsonResponse({'status': 'ok'})
     except Exception as e:
         return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+
+def permission_denied_view(request, exception=None):
+    return render(request, 'catalog/403.html', status=403)

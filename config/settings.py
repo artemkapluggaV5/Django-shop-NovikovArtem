@@ -142,7 +142,11 @@ LOGIN_REDIRECT_URL = 'home'
 
 LOGOUT_REDIRECT_URL = 'home'
 
+LOGIN_REDIRECT_URL = 'categories'
+
 LOGIN_URL = 'login'
+
+LOGOUT_REDIRECT_URL = 'login'
 
 CART_SESSION_ID = 'cart'
 

@@ -36,5 +36,7 @@ if settings.DEBUG:
                       path('__debug__/', include(debug_toolbar.urls)),
                   ] + urlpatterns
 
+handler403 = 'catalog.views.permission_denied_view'
+
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
