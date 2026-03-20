@@ -1,7 +1,6 @@
 {% extends 'catalog/base.html' %}
 
 {% block content %}
-    {{ form.media }}
 
     <div class="container py-5">
         <div class="row justify-content-center">
@@ -9,7 +8,8 @@
 
                 <nav aria-label="breadcrumb" class="mb-4">
                     <ol class="breadcrumb bg-white shadow-sm px-3 py-2 rounded-pill border">
-                        <li class="breadcrumb-item"><a href="{% url 'categories' %}" class="text-decoration-none">Категории</a></li>
+                        <li class="breadcrumb-item"><a href="{% url 'categories' %}" class="text-decoration-none">Категории</a>
+                        </li>
                         <li class="breadcrumb-item active fw-medium text-secondary">
                             {% if object %}Редактирование: {{ object.name }}{% else %}Новая категория{% endif %}
                         </li>
@@ -39,7 +39,8 @@
                                             <input class="form-check-input ms-0 me-2" type="checkbox"
                                                    name="{{ field.name }}" id="{{ field.id_for_label }}"
                                                    {% if field.value %}checked{% endif %}>
-                                            <label class="form-check-label fw-bold text-dark" for="{{ field.id_for_label }}">
+                                            <label class="form-check-label fw-bold text-dark"
+                                                   for="{{ field.id_for_label }}">
                                                 {{ field.label }}
                                             </label>
                                         </div>
@@ -56,17 +57,21 @@
                                             <div class="input-group shadow-sm rounded-3 overflow-hidden">
                                                 <span class="input-group-text bg-light border-end-0">
                                                     {% if 'name' in field.name %}<i class="bi bi-tag text-muted"></i>
-                                                    {% elif 'slug' in field.name %}<i class="bi bi-link-45deg text-muted"></i>
-                                                    {% elif 'image' in field.name %}<i class="bi bi-image text-muted"></i>
+                                                    {% elif 'slug' in field.name %}
+                                                        <i class="bi bi-link-45deg text-muted"></i>
+                                                    {% elif 'image' in field.name %}
+                                                        <i class="bi bi-image text-muted"></i>
                                                     {% else %}<i class="bi bi-text-paragraph text-muted"></i>{% endif %}
                                                 </span>
 
                                                 {% if field.field.widget.input_type == 'file' %}
                                                     <div class="form-control border-start-0 py-2">
-                                                        <input type="file" name="{{ field.name }}" id="{{ field.id_for_label }}" class="w-100">
+                                                        <input type="file" name="{{ field.name }}"
+                                                               id="{{ field.id_for_label }}" class="w-100">
                                                         {% if field.value %}
                                                             <div class="mt-2 small text-muted">
-                                                                Текущий файл: <a href="{{ field.value.url }}" target="_blank">{{ field.value.name }}</a>
+                                                                Текущий файл: <a href="{{ field.value.url }}"
+                                                                                 target="_blank">{{ field.value.name }}</a>
                                                             </div>
                                                         {% endif %}
                                                     </div>
@@ -82,9 +87,11 @@
                                         {% endif %}
                                     {% endif %}
 
-                                    {% if field.help_text %}<div class="form-text px-1">{{ field.help_text }}</div>{% endif %}
+                                    {% if field.help_text %}
+                                        <div class="form-text px-1">{{ field.help_text }}</div>{% endif %}
                                     {% for error in field.errors %}
-                                        <div class="invalid-feedback d-block px-1"><i class="bi bi-exclamation-circle me-1"></i> {{ error }}</div>
+                                        <div class="invalid-feedback d-block px-1"><i
+                                                class="bi bi-exclamation-circle me-1"></i> {{ error }}</div>
                                     {% endfor %}
                                 </div>
                             {% endfor %}
@@ -93,7 +100,8 @@
                                 <button type="submit" class="btn btn-primary btn-lg px-5 rounded-pill shadow-sm">
                                     <i class="bi bi-check2-circle me-2"></i>Сохранить
                                 </button>
-                                <a href="{% url 'categories' %}" class="btn btn-light btn-lg px-4 rounded-pill border shadow-sm">Отмена</a>
+                                <a href="{% url 'categories' %}"
+                                   class="btn btn-light btn-lg px-4 rounded-pill border shadow-sm">Отмена</a>
                             </div>
                         </form>
                     </div>
@@ -103,10 +111,13 @@
                     <div class="card border-0 shadow-sm rounded-4 bg-danger bg-opacity-10">
                         <div class="card-body p-4 d-flex align-items-center justify-content-between">
                             <div>
-                                <h5 class="text-danger fw-bold mb-1"><i class="bi bi-exclamation-octagon-fill me-2"></i>Удаление категории</h5>
-                                <p class="text-danger mb-0 small opacity-75">Внимание! Категория будет удалена навсегда.</p>
+                                <h5 class="text-danger fw-bold mb-1"><i class="bi bi-exclamation-octagon-fill me-2"></i>Удаление
+                                    категории</h5>
+                                <p class="text-danger mb-0 small opacity-75">Внимание! Категория будет удалена
+                                    навсегда.</p>
                             </div>
-                            <a href="{% url 'category-delete' object.id %}" class="btn btn-outline-danger px-4 rounded-pill fw-bold bg-white">Удалить</a>
+                            <a href="{% url 'category-delete' object.id %}"
+                               class="btn btn-outline-danger px-4 rounded-pill fw-bold bg-white">Удалить</a>
                         </div>
                     </div>
                 {% endif %}

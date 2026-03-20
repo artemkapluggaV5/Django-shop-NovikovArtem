@@ -1,6 +1,9 @@
+from tinymce.widgets import TinyMCE
+
 from .models import Category
 from django import forms
 from .models import Product
+from .widgets import TinyMCEWidget
 
 
 class CategoryForm(forms.ModelForm):
@@ -24,4 +27,3 @@ class ProductForm(forms.ModelForm):
             "description": forms.Textarea(attrs={"class": "form-control", "rows": 3}),
             "is_active": forms.CheckboxInput(attrs={"class": "form-check-input"}),
         }
-

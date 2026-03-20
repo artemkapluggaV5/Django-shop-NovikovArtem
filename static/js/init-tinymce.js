@@ -1,20 +1,30 @@
-document.addEventListener('DOMContentLoaded', function() {
-    console.log("TinyMCE Init Script Loaded");
+document.addEventListener('DOMContentLoaded', function () {
+
+    tinymce.remove();
 
     tinymce.init({
-        selector: 'textarea',
+        selector: '#id_description',
         height: 400,
+        width: '100%',
         language: 'ru',
-        plugins: [
-            'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
-            'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
-            'insertdatetime', 'media', 'table', 'help', 'wordcount'
-        ],
-        toolbar: 'undo redo | blocks | bold italic backcolor | ' +
-                 'alignleft aligncenter alignright alignjustify | ' +
-                 'bullist numlist outdent indent | removeformat | help',
+
+        plugins: ['lists'],
+
+        toolbar: 'undo redo | bold italic | bullist numlist',
+
+        menubar: false,
+        statusbar: false,
         branding: false,
-        promotion: false,
+
+
+        valid_styles: {
+            '*': ''
+        },
+
+        valid_elements: 'p,b,strong,i,em,ul,ol,li',
+
+        forced_root_block: 'p',
+
         setup: function (editor) {
             editor.on('change', function () {
                 editor.save();

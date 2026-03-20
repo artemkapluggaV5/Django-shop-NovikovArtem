@@ -13,7 +13,7 @@ class Category(models.Model):
         unique=True,
         verbose_name='URL-идентификатор'
     )
-    description = HTMLField(
+    description = HTMLField (
         blank=True,
         verbose_name='Описание'
     )

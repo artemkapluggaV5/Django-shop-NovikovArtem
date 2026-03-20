@@ -19,6 +19,11 @@ class CategoryAdmin(admin.ModelAdmin):
     list_per_page = 20
     inlines = [ProductInline]
 
+    class Media:
+        js = (
+            'https://cdn.jsdelivr.net/npm/tinymce@6/tinymce.min.js',
+            'js/init-tinymce.js',
+        )
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
@@ -28,6 +33,12 @@ class ProductAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('name',)}
     list_per_page = 20
     list_editable = ['price', 'is_active']
+
+    class Media:
+        js = (
+            'https://cdn.jsdelivr.net/npm/tinymce@6/tinymce.min.js',
+            'js/init-tinymce.js',
+        )
 
     def get_html_image(self, obj):
         if obj.image:
