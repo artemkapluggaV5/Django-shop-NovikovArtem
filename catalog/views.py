@@ -10,7 +10,7 @@ from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.views.decorators.http import require_POST
 from django.forms.models import model_to_dict
-from django.views.generic import RedirectView, ListView, CreateView, UpdateView, DeleteView, DetailView
+from django.views.generic import RedirectView, ListView, CreateView, UpdateView, DeleteView, DetailView, TemplateView
 import json
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.admin.views.decorators import staff_member_required
@@ -191,3 +191,18 @@ def update_product_order(request):
 
 def permission_denied_view(request, exception=None):
     return render(request, 'catalog/403.html', status=403)
+
+
+class HomeView(TemplateView):
+    template_name = 'catalog/users/index.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # категории
+        context['categories'] = Category.objects.all().order_by('order')[:8]
+
+        # товары (последние / популярные)
+        context['products'] = Product.objects.select_related('category').order_by('-id')[:8]
+
+        return context

@@ -3,7 +3,6 @@ from tinymce.widgets import TinyMCE
 from .models import Category
 from django import forms
 from .models import Product
-from .widgets import TinyMCEWidget
 
 
 class CategoryForm(forms.ModelForm):
