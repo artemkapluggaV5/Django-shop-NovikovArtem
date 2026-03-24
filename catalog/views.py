@@ -199,10 +199,32 @@ class HomeView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        # категории
         context['categories'] = Category.objects.all().order_by('order')[:8]
 
-        # товары (последние / популярные)
         context['products'] = Product.objects.select_related('category').order_by('-id')[:8]
 
+        return context
+
+class FrontCategoryDetailView(DetailView):
+    model = Category
+    template_name = 'catalog/users/category_detail.html'
+    context_object_name = 'category'
+
+class FrontProductDetailView(DetailView):
+    model = Product
+    template_name = 'catalog/users/product_detail.html'
+    context_object_name = 'product'
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['cart_product_form'] = CartAddProductForm()
+        return context
+
+class SingleCategoryView(DetailView):
+    model = Category
+    template_name = 'catalog/users/single_category.html'
+    context_object_name = 'category'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['products'] = self.object.products.all()
         return context

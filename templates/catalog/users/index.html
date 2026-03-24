@@ -3,186 +3,203 @@
 
 {% block content %}
 
-<div class="hero-section text-white d-flex align-items-center mb-5">
-    <div class="container text-center">
-        <h1 class="display-4 fw-bold mb-3">Каталог</h1>
-        <p class="lead mb-4">Идеальная и комфортная техника</p>
+    <div class="hero-section text-white d-flex align-items-center mb-5">
+        <div class="container text-center">
+            <h1 class="display-4 fw-bold mb-3">Мой Магазин</h1>
+            <p class="lead mb-4">Идеальная и комфортная техника</p>
 
-        <form method="get" class="d-flex justify-content-center">
-            <input type="text" name="q"
-                   class="form-control hero-search me-2"
-                   placeholder="Поиск категорий..."
-                   value="{{ request.GET.q }}">
-            <button class="btn btn-light px-4">Поиск</button>
-        </form>
-    </div>
-</div>
-
-<div class="container mb-5">
-    <div class="row g-4">
-
-        {% for category in categories %}
-        <div class="col-md-4 col-lg-3">
-
-            <div class="category-card">
-
-                <div class="category-badge">
-                    {{ category.name }}
-                </div>
-
-                <div class="category-img">
-                    {% if category.image %}
-                        <img src="{{ category.image.url }}">
-                    {% else %}
-                        <img src="{% static 'img/no-image.png' %}">
-                    {% endif %}
-                </div>
-
-                <a href="{% url 'category-detail' category.pk %}" class="category-link">
-                    →
-                </a>
-
-            </div>
-
+            <form method="get" class="d-flex justify-content-center">
+                <input type="text" name="q"
+                       class="form-control hero-search me-2"
+                       placeholder="Поиск категорий..."
+                       value="{{ request.GET.q }}">
+                <button class="btn btn-light px-4">Поиск</button>
+            </form>
         </div>
-        {% empty %}
-        <div class="text-center">
-            <p class="text-muted">Категории не найдены</p>
-        </div>
-        {% endfor %}
-
     </div>
-</div>
 
-<div class="container mt-5">
-    <h2 class="text-center mb-4">Популярные товары</h2>
+    <div class="container mb-5">
+        <div class="row g-4">
 
-    <div class="row g-4">
+            {% for category in categories %}
+                <div class="col-md-4 col-lg-3">
 
-        {% for product in products %}
-        <div class="col-md-3">
+                    <div class="category-card">
 
-            <div class="product-card">
+                        <div class="category-badge">
+                            {{ category.name }}
+                        </div>
 
-                {% if product.image %}
-                    <img src="{{ product.image.url }}" class="product-img">
-                {% else %}
-                    <img src="{% static 'img/no-image.png' %}" class="product-img">
-                {% endif %}
+                        <div class="category-img">
+                            {% if category.image %}
+                                <img src="{{ category.image.url }}" alt="{{ category.name }}">
+                            {% else %}
+                                <img src="{% static 'img/no-image.png' %}" alt="Нет изображения">
+                            {% endif %}
+                        </div>
 
-                <div class="p-3">
-                    <h6>{{ product.name }}</h6>
-                    <p class="text-muted small mb-2">{{ product.price }} ₽</p>
+                        <a href="{% url 'frontend-category-detail' category.pk %}" class="category-link">
+                            →
+                        </a>
 
-                    <a href="#" class="btn btn-dark w-100">Купить</a>
+
+                    </div>
+
                 </div>
-
-            </div>
-
-        </div>
-        {% endfor %}
-
-    </div>
-</div>
-
-<div class="container mt-5">
-    <nav>
-        <ul class="pagination justify-content-center">
-
-            {% if page_obj.has_previous %}
-            <li class="page-item">
-                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Назад</a>
-            </li>
-            {% endif %}
-
-            {% for num in page_obj.paginator.page_range %}
-            <li class="page-item {% if page_obj.number == num %}active{% endif %}">
-                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
-            </li>
+            {% empty %}
+                <div class="text-center">
+                    <p class="text-muted">Категории не найдены</p>
+                </div>
             {% endfor %}
 
-            {% if page_obj.has_next %}
-            <li class="page-item">
-                <a class="page-link" href="?page={{ page_obj.next_page_number }}">Вперёд</a>
-            </li>
-            {% endif %}
+        </div>
+    </div>
 
-        </ul>
-    </nav>
-</div>
+    <div class="container mt-5">
+        <h2 class="text-center mb-4">Популярные товары</h2>
 
-<style>
-.hero-section {
-    height: 400px;
-    background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
-                url("{% static 'img/hero.jpg' %}") center/cover no-repeat;
-}
+        <div class="row g-4">
 
-.hero-search {
-    max-width: 400px;
-    border-radius: 30px;
-    padding: 12px 20px;
-}
+            {% for product in products %}
+                <div class="col-md-3">
 
-.category-card {
-    background: #1e1e1e;
-    border-radius: 20px;
-    padding: 15px;
-    position: relative;
-    transition: 0.3s;
-}
+                    <div class="product-card">
 
-.category-card:hover {
-    transform: translateY(-8px);
-}
+                        {% if product.image %}
+                            <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-img">
+                        {% else %}
+                            <img src="{% static 'img/no-image.png' %}" alt="Нет изображения" class="product-img">
+                        {% endif %}
 
-.category-img img {
-    width: 100%;
-    height: 220px;
-    object-fit: cover;
-    border-radius: 15px;
-}
+                        <div class="p-3">
+                            <h6>{{ product.name }}</h6>
+                            <p class="text-muted small mb-2">{{ product.price }} ₽</p>
 
-.category-badge {
-    position: absolute;
-    top: 15px;
-    left: 15px;
-    right: 15px;
-    background: #111;
-    color: #fff;
-    text-align: center;
-    padding: 8px;
-    border-radius: 20px;
-    font-size: 14px;
-}
+                            <a href="{% url 'frontend-product-detail' product.pk %}" class="btn btn-dark w-100">
+                                Смотреть / Купить
+                            </a>
+                        </div>
 
-.category-link {
-    position: absolute;
-    bottom: 15px;
-    right: 15px;
-    background: #000;
-    color: #fff;
-    border-radius: 50%;
-    padding: 10px 14px;
-    text-decoration: none;
-}
+                    </div>
 
-.product-card {
-    border-radius: 15px;
-    overflow: hidden;
-    background: #fff;
-    transition: 0.3s;
-}
+                </div>
+            {% empty %}
+                <div class="text-center">
+                    <p class="text-muted">Товары не найдены</p>
+                </div>
+            {% endfor %}
 
-.product-card:hover {
-    transform: translateY(-5px);
-}
+        </div>
 
-.product-img {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-}
-</style>
+        {% if is_paginated %}
+            <nav class="mt-4">
+                <ul class="pagination justify-content-center">
+
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Назад</a>
+                        </li>
+                    {% endif %}
+
+                    {% for num in page_obj.paginator.page_range %}
+                        <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+                            <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                        </li>
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}">Вперёд</a>
+                        </li>
+                    {% endif %}
+
+                </ul>
+            </nav>
+        {% endif %}
+
+    </div>
+
+    <style>
+        .hero-section {
+            height: 400px;
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+            url("{% static 'img/hero.jpg' %}") center/cover no-repeat;
+        }
+
+        .hero-search {
+            max-width: 400px;
+            border-radius: 30px;
+            padding: 12px 20px;
+        }
+
+        .category-card {
+            background: #1e1e1e;
+            border-radius: 20px;
+            padding: 15px;
+            position: relative;
+            transition: 0.3s;
+            min-height: 250px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .category-card:hover {
+            transform: translateY(-8px);
+        }
+
+        .category-img img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            border-radius: 15px;
+        }
+
+        .category-img {
+            flex: 1 0 auto;
+            margin-bottom: 10px;
+        }
+
+        .category-badge {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            right: 15px;
+            background: #111;
+            color: #fff;
+            text-align: center;
+            padding: 8px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+
+        .category-link {
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
+            background: #000;
+            color: #fff;
+            border-radius: 50%;
+            padding: 10px 14px;
+            text-decoration: none;
+        }
+
+        .product-card {
+            border-radius: 15px;
+            overflow: hidden;
+            background: #fff;
+            transition: 0.3s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .product-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+    </style>
 
 {% endblock %}

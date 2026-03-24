@@ -26,5 +26,8 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('register/', user_views.register_view, name='register'),
     path('update-product-order/', views.update_product_order, name='update_product_order'),
-    path('test/', HomeView.as_view(), name='home')
+    path('test/', HomeView.as_view(), name='home'),
+    path('frontend/categories/<int:pk>/', views.FrontCategoryDetailView.as_view(), name='frontend-category-detail'),
+    path('frontend/products/<int:pk>/', views.FrontProductDetailView.as_view(), name='frontend-product-detail'),
+    path('catalog/<int:pk>/', views.SingleCategoryView.as_view(), name='single-category'),
 ]
