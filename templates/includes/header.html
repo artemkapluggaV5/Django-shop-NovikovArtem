@@ -28,49 +28,62 @@
                        value="{{ request.GET.q }}">
             </form>
 
-            <ul class="navbar-nav align-items-center">
-                <li class="nav-item me-lg-2">
-                    <a href="{% url 'categories' %}"
-                       class="nav-link px-3 rounded-pill fw-medium {% if 'categor' in request.resolver_match.url_name %}active bg-primary text-white shadow-sm{% else %}text-secondary{% endif %}">
-                        <i class="bi bi-grid-fill me-1"></i> Категории
-                    </a>
-                </li>
+<ul class="navbar-nav align-items-center">
 
-                <li class="nav-item me-lg-2">
-                    <a href="{% url 'product_list' %}"
-                       class="nav-link px-3 rounded-pill fw-medium {% if 'product' in request.resolver_match.url_name %}active bg-primary text-white shadow-sm{% else %}text-secondary{% endif %}">
-                        <i class="bi bi-box-seam-fill me-1"></i> Товары
-                    </a>
-                </li>
+    {% if user.is_authenticated and user.is_staff %}
+        <!-- Для сотрудников: админские страницы -->
+        <li class="nav-item me-lg-2">
+            <a href="{% url 'categories' %}"
+               class="nav-link px-3 rounded-pill fw-medium {% if 'categor' in request.resolver_match.url_name %}active bg-primary text-white shadow-sm{% else %}text-secondary{% endif %}">
+                <i class="bi bi-grid-fill me-1"></i> Категории
+            </a>
+        </li>
 
-                {% if user.is_authenticated and user.is_staff %}
-                    <li class="nav-item dropdown me-lg-2">
-                        <a class="nav-link px-3 rounded-pill fw-medium bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25 dropdown-toggle"
-                           href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="bi bi-plus-circle-fill me-1"></i> Админ-панель
-                        </a>
-                        <ul class="dropdown-menu shadow border-0 mt-3 rounded-4 p-2">
+        <li class="nav-item me-lg-2">
+            <a href="{% url 'product_list' %}"
+               class="nav-link px-3 rounded-pill fw-medium {% if 'product' in request.resolver_match.url_name %}active bg-primary text-white shadow-sm{% else %}text-secondary{% endif %}">
+                <i class="bi bi-box-seam-fill me-1"></i> Товары
+            </a>
+        </li>
 
-                            {% if perms.catalog.add_category %}
-                                <li><a class="dropdown-item rounded-pill my-1" href="{% url 'category-create' %}">Создать
-                                    категорию</a></li>
-                            {% endif %}
-
-                            {% if perms.catalog.add_product %}
-                                <li><a class="dropdown-item rounded-pill my-1" href="{% url 'product-create' %}">Создать
-                                    товар</a></li>
-                            {% endif %}
-
-                            {% if perms.catalog.change_category or perms.catalog.change_product %}
-                                <li>
-                                    <hr class="dropdown-divider">
-                                </li>
-                                <li><a class="dropdown-item rounded-pill my-1 text-danger" href="/admin/">Стандартная
-                                    админка</a></li>
-                            {% endif %}
-                        </ul>
-                    </li>
+        <!-- Админ-панель -->
+        <li class="nav-item dropdown me-lg-2">
+            <a class="nav-link px-3 rounded-pill fw-medium bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25 dropdown-toggle"
+               href="#" role="button" data-bs-toggle="dropdown">
+                <i class="bi bi-plus-circle-fill me-1"></i> Админ-панель
+            </a>
+            <ul class="dropdown-menu shadow border-0 mt-3 rounded-4 p-2">
+                {% if perms.catalog.add_category %}
+                    <li><a class="dropdown-item rounded-pill my-1" href="{% url 'category-create' %}">Создать категорию</a></li>
                 {% endif %}
+                {% if perms.catalog.add_product %}
+                    <li><a class="dropdown-item rounded-pill my-1" href="{% url 'product-create' %}">Создать товар</a></li>
+                {% endif %}
+                {% if perms.catalog.change_category or perms.catalog.change_product %}
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item rounded-pill my-1 text-danger" href="/admin/">Стандартная админка</a></li>
+                {% endif %}
+            </ul>
+        </li>
+
+    {% else %}
+        <!-- Для обычных пользователей: публичные страницы -->
+
+        <li class="nav-item me-lg-2">
+            <a href="{% url 'frontend-category-list' %}"
+               class="nav-link px-3 rounded-pill fw-medium {% if 'frontend-category-list' in request.resolver_match.url_name %}active bg-primary text-white shadow-sm{% else %}text-secondary{% endif %}">
+                <i class="bi bi-grid-fill me-1"></i> Категории
+            </a>
+        </li>
+
+        <li class="nav-item me-lg-2">
+            <a href="{% url 'frontend-product-list' %}"
+               class="nav-link px-3 rounded-pill fw-medium {% if 'frontend-product-list' in request.resolver_match.url_name %}active bg-primary text-white shadow-sm{% else %}text-secondary{% endif %}">
+                <i class="bi bi-box-seam-fill me-1"></i> Товары
+            </a>
+        </li>
+
+    {% endif %}
 
                 <li class="nav-item me-lg-3">
                     <a href="{% url 'cart:cart_detail' %}"

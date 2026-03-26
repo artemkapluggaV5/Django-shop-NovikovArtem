@@ -1,5 +1,5 @@
 from decimal import Decimal
-
+from django.views import View
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.db import models
 from django.db.models import Q
@@ -16,6 +16,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.admin.views.decorators import staff_member_required
 from django.utils.decorators import method_decorator
 
+from cart.cart import Cart
 from cart.forms import CartAddProductForm
 from .models import Category, Product
 from .forms import CategoryForm, ProductForm
@@ -203,6 +204,7 @@ class HomeView(TemplateView):
 
         context['products'] = Product.objects.select_related('category').order_by('-id')[:8]
 
+        context['default_category'] = context['categories'].first()
         return context
 
 class FrontCategoryDetailView(DetailView):
@@ -228,3 +230,28 @@ class SingleCategoryView(DetailView):
         context = super().get_context_data(**kwargs)
         context['products'] = self.object.products.all()
         return context
+
+class CategoryListFrontView(ListView):
+    model = Category
+    template_name = 'catalog/users/category_list.html'
+    context_object_name = 'categories'
+
+class FrontProductListView(ListView):
+    model = Product
+    template_name = 'catalog/users/product_list.html'
+    context_object_name = 'products'
+    paginate_by = 12
+
+class FrontCartAddView(View):
+    def post(self, request, product_id):
+        cart = Cart(request)
+        product = Product.objects.get(id=product_id)
+        cart.add(product=product, quantity=1, update_quantity=False)
+        return redirect('frontend-cart-detail')
+
+class FrontCartDetailView(View):
+    template_name = 'catalog/users/cart_detail.html'
+
+    def get(self, request):
+        cart = Cart(request)
+        return render(request, self.template_name, {'cart': cart})

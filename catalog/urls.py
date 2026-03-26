@@ -3,7 +3,7 @@ from catalog import views
 from django.contrib.auth import views as auth_views
 from django.conf import settings
 import users.views as user_views
-from catalog.views import HomeView
+from catalog.views import HomeView, CategoryListFrontView
 from users.forms import EmployeeLoginForm
 
 urlpatterns = [
@@ -30,4 +30,10 @@ urlpatterns = [
     path('frontend/categories/<int:pk>/', views.FrontCategoryDetailView.as_view(), name='frontend-category-detail'),
     path('frontend/products/<int:pk>/', views.FrontProductDetailView.as_view(), name='frontend-product-detail'),
     path('catalog/<int:pk>/', views.SingleCategoryView.as_view(), name='single-category'),
+    path('frontend/categories/', views.CategoryListFrontView.as_view(), name='frontend-category-list'),
+  path('frontend/products/', views.FrontProductListView.as_view(), name='frontend-product-list'),
+# Фронтенд корзина (для обычных пользователей)
+path('frontend/cart/add/<int:product_id>/', views.FrontCartAddView.as_view(), name='frontend-cart-add'),
+path('frontend/cart/', views.FrontCartDetailView.as_view(), name='frontend-cart-detail'),
 ]
+
